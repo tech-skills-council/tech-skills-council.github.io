@@ -38,8 +38,20 @@ const ALLOWED_ORIGINS = [
   "http://127.0.0.1:8000",
 ];
 
+/* Hostnames a Turnstile token may legitimately have been issued for. */
+const ALLOWED_HOSTNAMES = [
+  "tech-skills-council.github.io",
+  "localhost",
+  "127.0.0.1",
+];
+
 const RATE_WINDOW_MINUTES = 10;
-const RATE_MAX_PER_WINDOW = 5;
+/* Campus networks put hundreds of students behind a single public IP. A limit
+   tuned for one person per address (5) would reject most of a computer lab or
+   hostel block the moment a poster goes up — the exact situation this is built
+   for. Turnstile is the real bot gate; this only has to stop a scripted flood,
+   so it is set well above any plausible burst of genuine sign-ups. */
+const RATE_MAX_PER_WINDOW = 40;
 const MAX_BODY_BYTES = 16000;
 
 const UNIVERSITIES = ["REC", "SNU", "AU"];
@@ -266,6 +278,15 @@ function emailHtml(form: string, row: Record<string, unknown>) {
   </div></body></html>`;
 }
 
+/* Keeps background work alive after the response is returned. Without this the
+   isolate can be torn down the moment we respond, and a floating promise — the
+   notification email — is silently dropped. */
+function background(p: Promise<unknown>) {
+  const rt = (globalThis as { EdgeRuntime?: { waitUntil?: (p: Promise<unknown>) => void } }).EdgeRuntime;
+  if (rt && typeof rt.waitUntil === "function") rt.waitUntil(p);
+  return p;
+}
+
 async function notify(form: string, row: Record<string, unknown>) {
   if (!RESEND_API_KEY) return;
   try {
@@ -326,6 +347,15 @@ Deno.serve(async (req: Request) => {
     });
     const outcome = await verify.json().catch(() => ({ success: false }));
     if (!outcome.success) return json({ error: "verification_failed" }, 403, headers);
+
+    /* A token proves a human solved a challenge — not that they solved it here.
+       Cloudflare returns the hostname it was issued for; anything else is a token
+       lifted from another site and replayed against this endpoint. */
+    const issuedFor = String(outcome.hostname ?? "");
+    if (issuedFor && !ALLOWED_HOSTNAMES.includes(issuedFor)) {
+      console.warn("turnstile hostname mismatch", issuedFor);
+      return json({ error: "verification_failed" }, 403, headers);
+    }
   }
 
   const rawIp = (req.headers.get("x-forwarded-for") ?? req.headers.get("cf-connecting-ip") ?? "unknown")
@@ -335,6 +365,15 @@ Deno.serve(async (req: Request) => {
   if (typeof recent === "number" && recent >= RATE_MAX_PER_WINDOW) {
     return json({ error: "rate_limited" }, 429, headers);
   }
+
+  /* Record the attempt before validating, so that a rejected submission still
+     counts against the window. Logging only successes would leave the validator
+     open to unlimited probing from a single source. */
+  await db("submit_events", {
+    method: "POST",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ ip_hash: ipHash, form }),
+  });
 
   const result = form === "council" ? validateCouncil(body) : validateLaunch(body);
   if (!result.ok) return json({ error: "invalid", field: result.error }, 422, headers);
@@ -346,22 +385,15 @@ Deno.serve(async (req: Request) => {
     body: JSON.stringify(result.row),
   });
 
-  // log the attempt either way, so repeat tries still count against the limit
-  await db("submit_events", {
-    method: "POST",
-    headers: { Prefer: "return=minimal" },
-    body: JSON.stringify({ ip_hash: ipHash, form }),
-  });
-
   if (res.status === 409) return json({ ok: true, duplicate: true }, 200, headers);
   if (!res.ok) {
     console.error("insert failed", res.status, await res.text());
     return json({ error: "store_failed" }, 502, headers);
   }
 
-  notify(form, result.row);
+  background(notify(form, result.row));
 
-  if (Math.random() < 0.02) rpc("prune_submit_events", {});
+  if (Math.random() < 0.02) background(rpc("prune_submit_events", {}));
 
   return json({ ok: true }, 201, headers);
 });

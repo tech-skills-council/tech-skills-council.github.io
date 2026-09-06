@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com; form-action 'self'">
 <title>Apply to the council — Tech &amp; Skills Council</title>
 <meta name="description" content="Apply for a seat on the founding council of the Tech & Skills Council — seven working teams across REC, Shiv Nadar University and Anurag University.">
 <meta name="theme-color" content="#8C1D40">
@@ -68,13 +69,13 @@
         <div class="field">
           <label for="full_name">Full name <span class="req">*</span></label>
           <input id="full_name" name="full_name" type="text" autocomplete="name" required>
-          <span class="err">Tell us what to call you.</span>
+          <span class="err">As you would like it to appear on council records.</span>
         </div>
 
         <div class="field">
           <label for="email">Email <span class="req">*</span></label>
           <input id="email" name="email" type="email" autocomplete="email" required>
-          <span class="err">That email doesn't look right.</span>
+          <span class="err">Enter a valid email address.</span>
         </div>
 
         <div class="field">
@@ -91,7 +92,7 @@
             <option value="SNU">Shiv Nadar University (SNU)</option>
             <option value="AU">Anurag University (AU)</option>
           </select>
-          <span class="err">Pick your university.</span>
+          <span class="err">Select your university.</span>
         </div>
 
         <div class="field">
@@ -104,13 +105,13 @@
             <option value="4">Fourth year</option>
             <option value="other">Other</option>
           </select>
-          <span class="err">Pick your year.</span>
+          <span class="err">Select your year of study.</span>
         </div>
 
         <div class="field">
           <label for="branch">Branch or major <span class="req">*</span></label>
           <input id="branch" name="branch" type="text" placeholder="Any branch — the council is not CS-only" required>
-          <span class="err">Tell us your branch.</span>
+          <span class="err">Enter your branch or major.</span>
         </div>
       </fieldset>
 
@@ -137,7 +138,7 @@
               <span><b>Board seat</b>Campus representative for SNU or AU. Governance-level, one per campus.</span>
             </label>
           </div>
-          <span class="err">Pick the kind of seat you want.</span>
+          <span class="err">Select the kind of seat you are applying for.</span>
         </div>
 
         <div class="field">
@@ -152,7 +153,7 @@
             <option value="industry_alumni">Industry &amp; Alumni Relations — mentors, speakers, sponsors, alumni at ASU</option>
             <option value="pr_outreach">PR &amp; Outreach — recruitment across all three campuses, social, member comms</option>
           </select>
-          <span class="err">Pick your first choice.</span>
+          <span class="err">Select your first-choice team.</span>
         </div>
 
         <div class="field">
@@ -180,7 +181,7 @@
             <option value="10+">More than 10 hours</option>
           </select>
           <span class="hint">Say what's true during exam weeks, not your best week. Over-promising helps nobody.</span>
-          <span class="err">Give us a realistic number.</span>
+          <span class="err">Select a realistic figure.</span>
         </div>
 
         <div class="field">
@@ -204,7 +205,7 @@
             placeholder="What pulled you toward the council rather than just attending events? Be specific — 'I want to build my resume' is honest but tells us nothing about you."></textarea>
           <div class="counter" data-count-for="why_join"></div>
           <span class="hint">A few sentences minimum. We read this one first.</span>
-          <span class="err">Give us a few real sentences here.</span>
+          <span class="err">Please write at least a few sentences.</span>
         </div>
 
         <div class="field">
@@ -213,7 +214,7 @@
             placeholder="Projects, events you've organised, clubs, teaching, design work, writing, anything you've shipped or run. Half-finished counts — say what happened and what you learned."></textarea>
           <div class="counter" data-count-for="relevant_experience"></div>
           <span class="hint">Not a CV. One or two things you actually did, described plainly.</span>
-          <span class="err">Tell us about at least one thing you've done.</span>
+          <span class="err">Describe at least one relevant thing you have done.</span>
         </div>
 
         <div class="field">
@@ -238,19 +239,19 @@
           <label for="portfolio_url">GitHub, portfolio or work sample</label>
           <input id="portfolio_url" name="portfolio_url" type="url" placeholder="https://…">
           <span class="hint">Optional. Design work, writing and event photos all count.</span>
-          <span class="err">That link needs to start with http:// or https://</span>
+          <span class="err">Enter a full link beginning with http:// or https://</span>
         </div>
 
         <div class="field">
           <label for="linkedin_url">LinkedIn</label>
           <input id="linkedin_url" name="linkedin_url" type="url" placeholder="https://linkedin.com/in/…">
-          <span class="err">That link needs to start with http:// or https://</span>
+          <span class="err">Enter a full link beginning with http:// or https://</span>
         </div>
 
         <div class="field">
           <div class="checkline">
             <input id="attending_launch" name="attending_launch" type="checkbox" checked>
-            <label for="attending_launch" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+            <label for="attending_launch">
               Count me in for Launch Day at my campus as well
             </label>
           </div>
@@ -263,13 +264,13 @@
         <div class="field">
           <div class="checkline">
             <input id="consent" name="consent" type="checkbox" required>
-            <label for="consent" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+            <label for="consent">
               I agree that the council may store this application, including my written answers, to run the
               selection process. It is never shared outside the council without my consent, and I can ask for it
               to be deleted at any time. <span class="req">*</span>
             </label>
           </div>
-          <span class="err">We need this to store your application.</span>
+          <span class="err">Your consent is required in order to store this application.</span>
         </div>
       </fieldset>
 

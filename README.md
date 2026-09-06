@@ -57,6 +57,19 @@ supabase secrets set TURNSTILE_SECRET=...
 supabase secrets set RESEND_API_KEY=... NOTIFY_EMAIL=techskillscouncil@gmail.com
 ```
 
+**`SERVICE_ROLE_KEY` is not optional.** Without it the function returns 500
+`not_configured` on every submission and nothing is ever stored — the form appears
+to work, the captcha passes, and the applicant is told it did not go through.
+Confirm what is actually set with:
+
+```bash
+supabase secrets list
+```
+
+`SUPABASE_URL` is injected automatically; do not set it. Supabase reserves the
+`SUPABASE_` prefix for its own variables, which is why the service-role key is
+stored here under the unprefixed name.
+
 Then put the function URL into `config.js` as `ENROL_ENDPOINT`, and the Turnstile **site**
 key (public) as `TURNSTILE_SITE_KEY`. Without `RESEND_API_KEY` everything still works —
 submissions save, you just don't get the email.
@@ -84,6 +97,25 @@ salted SHA-256 hashes, never raw.
 
 The realistic failure mode is the free Supabase project pausing after a week of inactivity.
 Open the dashboard once before Launch Day.
+
+The per-IP limit is deliberately set high (40 per 10 minutes). Campus networks put
+hundreds of students behind a single public IP, so a limit tuned for one person per
+address rejects most of a lab or hostel block the moment a poster goes up. Turnstile
+is the real bot gate; the IP limit only has to stop a scripted flood.
+
+### Posters
+
+The PNGs under `assets/img/posters/` are exported artwork, not generated at build
+time — an edit to the poster source is not live until the PNG is re-exported and
+committed. Before shipping either one, confirm the QR still decodes:
+
+```bash
+python3 -c "import cv2,sys; print(cv2.QRCodeDetector().detectAndDecode(cv2.imread(sys.argv[1]))[0] or 'UNREADABLE')" \
+  assets/img/posters/tsc-launch-day-poster.png
+```
+
+A poster whose footer overflows the A4 artboard has its QR clipped and silently
+becomes unscannable while still looking fine at a glance.
 
 ## Data protection
 
