@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enrol — Tech &amp; Skills Council</title>
+<meta name="description" content="Enrol in the Tech & Skills Council — open to Cintana Alliance / ASU pathway students at REC, Shiv Nadar University and Anurag University. Every branch, no coding experience assumed.">
+<meta name="theme-color" content="#8C1D40">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="index.html" aria-label="Tech and Skills Council — home">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M21 9 H9 V55 H21" fill="none" stroke="#FFC627" stroke-width="5" stroke-linecap="square"/>
+        <path d="M43 9 H55 V55 H43" fill="none" stroke="#FFC627" stroke-width="5" stroke-linecap="square"/>
+        <rect x="25" y="41" width="16" height="6" fill="#FFFFFF"/>
+        <rect x="25" y="30" width="12" height="6" fill="#FFFFFF"/>
+        <rect x="25" y="19" width="8" height="6" fill="#FFFFFF"/>
+      </svg>
+      <span>Tech &amp; Skills Council</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#programme">Programme</a>
+      <a href="index.html#launch">Launch Day</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:66px 0 46px">
+  <div class="wrap">
+    <div class="hero-tag">
+      <span class="tag solid">Powered by ASU · Cintana Alliance</span>
+      <span class="tag gold">Founding cohort</span>
+    </div>
+    <h1 class="hero-title" style="font-size:clamp(42px,8vw,92px)">Enrol</h1>
+    <p class="hero-lede">
+      Two minutes. Open to every branch and every year — no coding experience assumed.
+      You need active Cintana Alliance / ASU pathway status at REC, Shiv Nadar University or Anurag University.
+    </p>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap form-wrap">
+    <form id="enrol-form" novalidate>
+
+      <div class="field">
+        <label for="full_name">Full name</label>
+        <input id="full_name" name="full_name" type="text" autocomplete="name" required>
+        <span class="err">Tell us what to call you.</span>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+        <span class="hint">Use the address you check — credentials and session links go here.</span>
+        <span class="err">That email doesn't look right.</span>
+      </div>
+
+      <div class="field">
+        <label for="university">University</label>
+        <select id="university" name="university" required>
+          <option value="">Select your university</option>
+          <option value="REC">Rajalakshmi Engineering College (REC)</option>
+          <option value="SNU">Shiv Nadar University (SNU)</option>
+          <option value="AU">Anurag University (AU)</option>
+        </select>
+        <span class="err">Pick your university.</span>
+      </div>
+
+      <div class="field">
+        <label for="year_of_study">Year of study</label>
+        <select id="year_of_study" name="year_of_study" required>
+          <option value="">Select your year</option>
+          <option value="1">First year</option>
+          <option value="2">Second year</option>
+          <option value="3">Third year</option>
+          <option value="4">Fourth year</option>
+          <option value="other">Other</option>
+        </select>
+        <span class="err">Pick your year.</span>
+      </div>
+
+      <div class="field">
+        <label for="branch">Branch or major</label>
+        <input id="branch" name="branch" type="text" placeholder="Any branch — this is not a CS-only council" required>
+        <span class="err">Tell us your branch.</span>
+      </div>
+
+      <div class="field">
+        <label for="experience">Technical experience</label>
+        <select id="experience" name="experience">
+          <option value="none">None at all — starting from zero</option>
+          <option value="some">A little — I've written some code</option>
+          <option value="comfortable">Comfortable — I build things already</option>
+        </select>
+        <span class="hint">There is no wrong answer. It only decides which track you start on.</span>
+      </div>
+
+      <div class="field">
+        <label for="interests">What do you want to build or learn?</label>
+        <textarea id="interests" name="interests" rows="3" maxlength="500" placeholder="Optional — AI/ML, cloud, full-stack, data, or something you have in mind"></textarea>
+      </div>
+
+      <div class="field">
+        <div class="checkline">
+          <input id="attending_launch" name="attending_launch" type="checkbox" checked>
+          <label for="attending_launch" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+            Count me in for Launch Day at my campus
+          </label>
+        </div>
+      </div>
+
+      <div class="field" id="council-interest">
+        <div class="checkline">
+          <input id="council_interest" name="council_interest" type="checkbox">
+          <label for="council_interest" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+            I'm interested in a council role — send me the application when it opens
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="checkline">
+          <input id="consent" name="consent" type="checkbox" required>
+          <label for="consent" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+            I agree that the council may store these details to manage my membership. They are never shared outside the council without my consent, and I can ask for them to be deleted at any time.
+          </label>
+        </div>
+        <span class="err">We need this to store your enrolment.</span>
+      </div>
+
+      <!-- honeypot: hidden from people, tempting to bots -->
+      <div class="hp" aria-hidden="true">
+        <label for="company">Company</label>
+        <input id="company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div id="turnstile-slot"></div>
+
+      <button class="btn big" id="enrol-submit" type="submit">Enrol</button>
+
+      <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-col">
+      <h5>Council</h5>
+      <a href="index.html#programme">Programme</a>
+      <a href="index.html#launch">Launch Day</a>
+      <a href="index.html#tiers">Membership</a>
+    </div>
+    <div class="f-col">
+      <h5>Contact</h5>
+      <a href="mailto:techskillscouncil@gmail.com">techskillscouncil@gmail.com</a>
+    </div>
+    <p class="f-legal">
+      Tech &amp; Skills Council — an official programme of the ASU Cintana Alliance, in partnership with Arizona State
+      University. © <span id="year">2026</span> Tech &amp; Skills Council.
+    </p>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  (function () {
+    var cfg = window.TSC_CONFIG || {};
+    if (!cfg.TURNSTILE_SITE_KEY) return;
+    var slot = document.getElementById('turnstile-slot');
+    var box = document.createElement('div');
+    box.className = 'cf-turnstile';
+    box.setAttribute('data-sitekey', cfg.TURNSTILE_SITE_KEY);
+    box.setAttribute('data-theme', 'dark');
+    slot.appendChild(box);
+    var s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    s.async = true; s.defer = true;
+    document.head.appendChild(s);
+  })();
+</script>
+<script src="assets/js/enrol.js"></script>
+</body>
+</html>
