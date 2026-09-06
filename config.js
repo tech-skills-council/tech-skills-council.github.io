@@ -5,11 +5,11 @@
 window.TSC_CONFIG = {
   // Supabase Edge Function that receives BOTH forms.
   // Looks like: https://<project-ref>.supabase.co/functions/v1/enrol
-  ENROL_ENDPOINT: 'https://YOUR-PROJECT.supabase.co/functions/v1/enrol',
+  ENROL_ENDPOINT: 'https://smvjvrwhbsvpnwdoastl.supabase.co/functions/v1/enrol',
 
   // Cloudflare Turnstile site key (public by design).
   // Leave empty to run without the widget — the other layers still apply.
-  TURNSTILE_SITE_KEY: '',
+  TURNSTILE_SITE_KEY: '0x4AAAAAAEqnp_LkQWcPsu50',
 
   CONTACT_EMAIL: 'techskillscouncil@gmail.com',
   SITE_URL: 'https://tech-skills-council.github.io',
