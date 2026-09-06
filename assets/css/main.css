@@ -237,3 +237,103 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:30px;justify-content:space-between}
 .form-status.show{display:block}
 .form-status.ok{border-color:var(--gold);color:var(--text)}
 .form-status.bad{border-color:#E5484D;color:#FFC9CB}
+
+/* ============================================================
+   Custom cursor — pointer devices only
+   ============================================================ */
+@media (hover: hover) and (pointer: fine){
+  html.js body{cursor:none}
+  html.js a,html.js button,html.js summary,html.js input,html.js select,html.js textarea,html.js label{cursor:none}
+
+  #cursor-dot,#cursor-ring{
+    position:fixed;top:0;left:0;z-index:200;pointer-events:none;
+    transform:translate3d(-100px,-100px,0);will-change:transform;
+  }
+  #cursor-dot{
+    width:7px;height:7px;margin:-3.5px 0 0 -3.5px;background:var(--gold);border-radius:50%;
+  }
+  #cursor-ring{
+    width:34px;height:34px;margin:-17px 0 0 -17px;border:1.5px solid rgba(255,198,39,.55);border-radius:50%;
+    transition:width .22s ease,height .22s ease,margin .22s ease,border-color .22s ease,background .22s ease;
+  }
+  #cursor-ring.hot{
+    width:56px;height:56px;margin:-28px 0 0 -28px;
+    border-color:var(--gold);background:rgba(255,198,39,.12);
+  }
+  #cursor-ring.press{width:26px;height:26px;margin:-13px 0 0 -13px}
+}
+@media (prefers-reduced-motion:reduce){
+  html.js body,html.js a,html.js button{cursor:auto}
+  #cursor-dot,#cursor-ring{display:none}
+}
+
+/* ============================================================
+   Added sections
+   ============================================================ */
+
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.cal .m{background:var(--surface);padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.cal .m .mo{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.cal .m p{font-size:14.5px;color:var(--muted)}
+.cal .m.flag{background:var(--surface-2);border-left:3px solid var(--gold)}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.yr{border-top:4px solid var(--maroon-lift);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.yr h3{font-size:20px}
+.yr .tag-y{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.yr ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px;font-size:14.5px;color:var(--muted)}
+.yr ul li::marker{color:var(--maroon-lift)}
+
+/* badging */
+.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.bd{background:var(--surface);padding:24px;display:flex;flex-direction:column;gap:10px}
+.bd .pill{
+  align-self:flex-start;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:5px 10px;border:1px solid var(--gold);color:var(--gold);
+}
+.bd .pill.solid{background:var(--gold);color:#111;border-color:var(--gold)}
+.bd h4{font-size:17px}
+.bd p{margin:0;font-size:14.5px;color:var(--muted)}
+
+/* posters */
+.posters{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px}
+.poster{display:flex;flex-direction:column;gap:12px}
+.poster img{
+  width:100%;height:auto;display:block;border:1px solid var(--line);
+  background:#fff;transition:transform .25s ease;
+}
+.poster a:hover img{transform:translateY(-3px)}
+.poster .cap{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.poster .cap h4{font-size:16px;text-transform:uppercase}
+.poster .cap span{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted-dim);text-transform:uppercase}
+
+/* two-door CTA */
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.door{background:var(--surface);padding:32px;display:flex;flex-direction:column;gap:14px;transition:background .2s ease}
+.door:hover{background:var(--surface-2)}
+.door .eyebrow{color:var(--gold)}
+.door h3{font-size:26px}
+.door p{margin:0;color:var(--muted);font-size:15.5px;flex-grow:1}
+.door .btn{align-self:flex-start;margin-top:6px}
+
+/* form extras */
+.form-intro{max-width:66ch;color:var(--muted);font-size:16px;margin-bottom:30px}
+fieldset{border:1px solid var(--line);background:var(--surface);padding:24px;margin:0 0 24px;display:block}
+legend{
+  font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);padding:0 10px;
+}
+.field textarea{resize:vertical;min-height:96px;font-family:var(--body)}
+.counter{font-family:var(--mono);font-size:11px;color:var(--muted-dim);text-align:right}
+.radio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.radio-card{
+  border:1px solid var(--line);padding:13px 15px;display:flex;gap:11px;align-items:flex-start;
+  font-size:14.5px;color:var(--muted);transition:border-color .15s ease,background .15s ease;
+}
+.radio-card:hover{border-color:var(--maroon-lift)}
+.radio-card input{margin-top:3px;accent-color:var(--gold);flex:0 0 auto}
+.radio-card b{display:block;color:var(--text);font-weight:400;margin-bottom:2px}
+.radio-card.checked{border-color:var(--gold);background:var(--surface-2)}
+.req{color:var(--gold)}

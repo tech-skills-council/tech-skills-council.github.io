@@ -1,114 +1,111 @@
 # Tech & Skills Council — website
 
-The public site and enrolment front door for the Tech & Skills Council, an official programme of the
-ASU Cintana Alliance spanning REC, Shiv Nadar University and Anurag University.
+Public site and the two front doors (Launch Day registration, council applications) for the
+Tech & Skills Council, an official programme of the ASU Cintana Alliance spanning REC,
+Shiv Nadar University and Anurag University.
 
-**Learn by Building.**
+**Learn by Building.** — live at https://tech-skills-council.github.io/
 
 ---
 
-## Stack, and why
+## Stack
 
 | Layer | Choice | Why |
 | --- | --- | --- |
-| Frontend | Hand-written HTML/CSS/JS, no framework, no build step | A council whose leads change every year should not inherit a toolchain. Edit a file, push, it's live. |
-| Hosting | GitHub Pages | Free, ties to the council's own GitHub organisation, HTTPS by default, deploys on push. |
-| Backend | Supabase (Postgres + REST) | Free tier, real database, row-level security, and a dashboard the council can actually use. No server to run. |
-| Anti-abuse | RLS + Cloudflare Turnstile + honeypot + timing check | Layered, and the layer that matters (RLS) is server-side. |
-| CI/CD | GitHub Actions | Deploys on push to `main`, and fails the build if a service-role key is ever committed. |
+| Frontend | Hand-written HTML/CSS/JS, no framework, no build step | Leads change every year; nobody should inherit a toolchain. Edit a file, push, it's live. |
+| Hosting | GitHub Pages from `main` | Free, org-owned, HTTPS, redeploys on push. |
+| Backend | One Supabase Edge Function + Postgres | The browser never touches the database. |
+| Anti-abuse | Turnstile + honeypot + timing + per-IP rate limit + RLS | Layered; the layers that matter run server-side. |
+| CI | GitHub Actions secret guard | Fails the build only on *real* credentials. |
 
-## Repository layout
+## Layout
 
 ```
-index.html                     one-page site: problem, programme, launch day, benefits, tiers, council, FAQ
-enrol.html                     enrolment form
+index.html            gap · programme · launch day · benefits · tiers · council ·
+                      calendar · roadmap · badging · posters · conduct · FAQ · two doors
+launch.html           Launch Day registration — short form
+council.html          Council application — long form, written answers
+enrol.html            redirect to launch.html (old links)
 404.html
-config.js                      PUBLIC config — Supabase URL, anon key, contact email, launch date labels
-assets/css/main.css            all styles
-assets/js/main.js              opening animation, scroll reveal, ticker
-assets/js/enrol.js             form validation and submission
-assets/img/                    logo (dark + light), favicon
-supabase/schema.sql            table, constraints, indexes, RLS policies — run once
-supabase/functions/enrol/      optional edge function for server-side Turnstile verification
-tools/build-preview.mjs        inlines CSS/JS into one file for previewing
-.github/workflows/deploy.yml   GitHub Pages deploy
+config.js             PUBLIC config — endpoint URL, Turnstile site key, contact email
+assets/css/main.css   all styles, including the custom cursor
+assets/js/main.js     opening animation, scroll reveal, ticker, cursor
+assets/js/forms.js    validation + submission for BOTH forms
+assets/img/posters/   print-ready A4 posters with live QR codes
+supabase/schema.sql   both tables, rate-limit table, RLS lockdown — run once
+supabase/functions/enrol/  the only thing that can write to the database
+.github/workflows/guard.yml  secret scan
 ```
 
 ## Setup
 
-### 1. Put it on GitHub
+### 1. Database
+
+Supabase → SQL Editor → paste `supabase/schema.sql` → run.
+
+RLS is enabled with **no policies at all**, so the anon key can neither read nor write.
+That is deliberate: every submission goes through the edge function, which holds the
+service-role key server-side. Council members read submissions in the dashboard.
+
+### 2. Edge function
 
 ```bash
-cd tsc-website
-git init -b main
-git add .
-git commit -m "Tech & Skills Council website"
-git remote add origin git@github.com:<ORG-OR-USERNAME>/tsc-website.git
-git push -u origin main
+supabase functions deploy enrol --no-verify-jwt
+supabase secrets set SERVICE_ROLE_KEY=... IP_SALT=<long random string>
+# optional but recommended:
+supabase secrets set TURNSTILE_SECRET=...
+supabase secrets set RESEND_API_KEY=... NOTIFY_EMAIL=techskillscouncil@gmail.com
 ```
 
-Then in the repo: **Settings → Pages → Source: GitHub Actions**. The workflow deploys on every push to `main`.
-The site lands at `https://<org-or-username>.github.io/tsc-website/`.
+Then put the function URL into `config.js` as `ENROL_ENDPOINT`, and the Turnstile **site**
+key (public) as `TURNSTILE_SITE_KEY`. Without `RESEND_API_KEY` everything still works —
+submissions save, you just don't get the email.
 
-Prefer a bare domain? Name the repo `<org-or-username>.github.io` instead, or add a `CNAME` file with a custom domain.
+### 3. Fill in the rest of `config.js`
 
-### 2. Create the database
+`LAUNCH_DATE_LABEL` / `LAUNCH_TIME_LABEL` once the Cintana Alliance approval clears.
+Leave them empty and the site says "to be announced" everywhere, including on both posters.
 
-1. Create a free project at supabase.com.
-2. SQL Editor → paste `supabase/schema.sql` → run.
-3. Settings → API → copy the **Project URL** and the **anon / publishable key**.
-4. Paste both into `config.js`, commit, push.
+## Load and abuse handling
 
-The anon key is meant to be public. What protects the data is the RLS policy in `schema.sql`:
-anonymous visitors can `INSERT` and nothing else — there is no `SELECT` policy, so the table cannot be
-read back with that key. Council members read enrolments in the Supabase dashboard.
+| Layer | Where | Stops |
+| --- | --- | --- |
+| Honeypot + 4s minimum fill time | browser | Naive bots |
+| Shape validation | browser | Typos, before a round trip |
+| Turnstile | browser + function | Scripted submissions |
+| Rate limit — 5 per 10 min per hashed IP | function | Floods from one source |
+| Strict re-validation | function | Hand-crafted requests |
+| CHECK constraints + unique email | Postgres | Bad or duplicate rows |
+| RLS with zero policies | Postgres | Any direct write from a browser |
 
-**Never commit the service-role key.** The deploy workflow fails the build if it finds one.
+Edge functions scale horizontally and Postgres handles the concurrency — a few hundred
+people registering at once during a poster push is not a problem. IPs are stored only as
+salted SHA-256 hashes, never raw.
 
-### 3. Turn on Turnstile (optional but recommended)
-
-Create a free Cloudflare Turnstile widget, put the **site key** in `config.js`. The widget then renders on the
-enrolment form. For true server-side verification, deploy `supabase/functions/enrol`, point `assets/js/enrol.js`
-at the function URL instead of the REST endpoint, and drop the `anon can enrol` policy so the function is the
-only way in.
-
-### 4. Fill in the rest of `config.js`
-
-- `CONTACT_EMAIL` — the council's Gmail
-- `LAUNCH_DATE_LABEL` / `LAUNCH_TIME_LABEL` — once the Cintana Alliance approval clears
-
-## Running it locally
-
-```bash
-python3 -m http.server 8000
-# then open http://localhost:8000
-```
-
-Single-file preview (for pasting somewhere that takes one HTML document):
-
-```bash
-node tools/build-preview.mjs index.html preview.html
-```
+The realistic failure mode is the free Supabase project pausing after a week of inactivity.
+Open the dashboard once before Launch Day.
 
 ## Data protection
 
-Enrolment records are personal data belonging to students. Per the council's charter:
+Both tables hold personal data, and the council application holds written answers people
+wrote in confidence. Per the charter: store securely, access only from the team that needs
+it, never share outside the council without consent, delete on request. Keep the Supabase
+project's member list short.
 
-- store them securely and access them only from the team that needs them
-- never share them outside the council without explicit member consent
-- delete a member's record on request
+## Local
 
-Keep the Supabase project's members list tight — the fewer people with dashboard access, the better.
+```bash
+python3 -m http.server 8000
+```
 
-## Editing content
+## Brand
 
-Everything is plain HTML. Copy lives in `index.html` and `enrol.html`; nothing is generated. The palette and
-type live in the `:root` block at the top of `assets/css/main.css`:
+`:root` at the top of `assets/css/main.css`. ASU Maroon `#8C1D40`, ASU Gold `#FFC627`,
+black, white — roughly 80% of any surface. Display: Archivo (standing in for ASU's
+Neue Haas Grotesk); body: the Arial/Helvetica stack ASU specifies for web.
 
-- ASU Maroon `#8C1D40`, ASU Gold `#FFC627`, black, white — roughly 80% of any surface
-- Display: Archivo (stands in for ASU's Neue Haas Grotesk); body: the Arial/Helvetica stack ASU specifies for web
+## Motion & accessibility
 
-## Accessibility & motion
-
-The opening animation plays once per browser session, is skippable with click or Escape, and is disabled entirely
-for anyone with reduced-motion preferences — as are scroll reveals and the ticker.
+The opening animation plays once per browser session, is skippable with click or Escape,
+and — like the scroll reveals, the ticker and the custom cursor — is disabled entirely
+under `prefers-reduced-motion`. The custom cursor is also off on touch devices.

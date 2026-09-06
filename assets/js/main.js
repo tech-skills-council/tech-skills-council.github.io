@@ -93,3 +93,60 @@
     boot();
   }
 })();
+
+/* ---------- 4. custom cursor ---------- */
+(function () {
+  'use strict';
+
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!fine || still) return;
+
+  var dot = document.createElement('div');
+  var ring = document.createElement('div');
+  dot.id = 'cursor-dot';
+  ring.id = 'cursor-ring';
+  dot.setAttribute('aria-hidden', 'true');
+  ring.setAttribute('aria-hidden', 'true');
+
+  function attach() {
+    document.body.appendChild(ring);
+    document.body.appendChild(dot);
+  }
+  if (document.body) { attach(); } else { document.addEventListener('DOMContentLoaded', attach); }
+
+  var mx = -100, my = -100;   // pointer
+  var rx = -100, ry = -100;   // ring, trailing
+
+  window.addEventListener('mousemove', function (ev) {
+    mx = ev.clientX; my = ev.clientY;
+  }, { passive: true });
+
+  window.addEventListener('mousedown', function () { ring.classList.add('press'); });
+  window.addEventListener('mouseup', function () { ring.classList.remove('press'); });
+
+  // grow over anything clickable
+  var HOT = 'a, button, summary, label, input, select, textarea, .cell, .door, .poster';
+  document.addEventListener('mouseover', function (ev) {
+    if (ev.target.closest && ev.target.closest(HOT)) ring.classList.add('hot');
+  });
+  document.addEventListener('mouseout', function (ev) {
+    if (ev.target.closest && ev.target.closest(HOT)) ring.classList.remove('hot');
+  });
+
+  // hide when the pointer leaves the window
+  document.addEventListener('mouseleave', function () {
+    dot.style.opacity = ring.style.opacity = '0';
+  });
+  document.addEventListener('mouseenter', function () {
+    dot.style.opacity = ring.style.opacity = '1';
+  });
+
+  (function frame() {
+    rx += (mx - rx) * 0.16;
+    ry += (my - ry) * 0.16;
+    dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
+    ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
+    window.requestAnimationFrame(frame);
+  })();
+})();

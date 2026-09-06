@@ -1,23 +1,20 @@
 /* Public site configuration.
    Nothing secret belongs in this file — it ships to every visitor.
-   The Supabase anon key is designed to be public; row-level security
-   (supabase/schema.sql) is what actually protects the data.        */
+   The site never talks to the database directly; it posts to the edge
+   function below, which is the only thing holding a key that can write. */
 window.TSC_CONFIG = {
-  // Supabase project — fill both in after creating the project
-  SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
-  SUPABASE_ANON_KEY: 'YOUR-PUBLISHABLE-ANON-KEY',
+  // Supabase Edge Function that receives BOTH forms.
+  // Looks like: https://<project-ref>.supabase.co/functions/v1/enrol
+  ENROL_ENDPOINT: 'https://YOUR-PROJECT.supabase.co/functions/v1/enrol',
 
-  // Table that receives enrolments
-  ENROL_TABLE: 'enrolments',
-
-  // Cloudflare Turnstile site key. Leave empty to run without the widget
-  // (the honeypot and rate limiting still apply).
+  // Cloudflare Turnstile site key (public by design).
+  // Leave empty to run without the widget — the other layers still apply.
   TURNSTILE_SITE_KEY: '',
 
-  // Shown on the site
   CONTACT_EMAIL: 'techskillscouncil@gmail.com',
+  SITE_URL: 'https://tech-skills-council.github.io',
 
-  // Launch Day — set once the Cintana Alliance approval clears
-  LAUNCH_DATE_LABEL: 'Date to be announced',
-  LAUNCH_TIME_LABEL: 'Timing to be announced'
+  // Launch Day — fill in once the Cintana Alliance approval clears
+  LAUNCH_DATE_LABEL: '',
+  LAUNCH_TIME_LABEL: ''
 };

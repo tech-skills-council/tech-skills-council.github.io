@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apply to the council — Tech &amp; Skills Council</title>
+<meta name="description" content="Apply for a seat on the founding council of the Tech & Skills Council — seven working teams across REC, Shiv Nadar University and Anurag University.">
+<meta name="theme-color" content="#8C1D40">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="index.html" aria-label="Tech and Skills Council — home">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18 8 H8 V56 H18" fill="none" stroke="#FFC627" stroke-width="5" stroke-linecap="square"/>
+        <path d="M46 8 H56 V56 H46" fill="none" stroke="#FFC627" stroke-width="5" stroke-linecap="square"/>
+        <rect x="22" y="41" width="22" height="7" fill="#FFFFFF"/>
+        <rect x="22" y="30" width="16" height="7" fill="#FFFFFF"/>
+        <rect x="22" y="19" width="10" height="7" fill="#FFFFFF"/>
+      </svg>
+      <span>Tech &amp; Skills Council</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#programme">Programme</a>
+      <a href="index.html#council">The council</a>
+      <a href="index.html#faq">FAQ</a>
+      <a class="btn" href="launch.html">Register for Launch Day</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:64px 0 44px">
+  <div class="wrap">
+    <div class="hero-tag">
+      <span class="tag solid">Powered by ASU · Cintana Alliance</span>
+      <span class="tag gold">Founding council</span>
+      <span class="tag">REC · SNU · AU</span>
+    </div>
+    <h1 class="hero-title" style="font-size:clamp(40px,7.5vw,88px)">Build the<span class="gold">council</span></h1>
+    <p class="hero-lede">
+      Seven working teams, plus board seats reserved for SNU and AU. This is the group that decides what the
+      council actually does — not a membership form.
+    </p>
+    <p class="hero-note">Applications close: to be announced · interviews run online · results announced on LinkedIn</p>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap form-wrap">
+    <p class="form-intro">
+      Fifteen minutes, honestly answered, beats an hour of polish. We read the written answers first and the
+      credentials second — no prior council experience is needed, and every branch and year is welcome.
+      What we're looking for is people who will still be doing the work in week nine.
+    </p>
+
+    <form id="council-form" data-tsc-form="council" novalidate>
+
+      <fieldset>
+        <legend>You</legend>
+
+        <div class="field">
+          <label for="full_name">Full name <span class="req">*</span></label>
+          <input id="full_name" name="full_name" type="text" autocomplete="name" required>
+          <span class="err">Tell us what to call you.</span>
+        </div>
+
+        <div class="field">
+          <label for="email">Email <span class="req">*</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+          <span class="err">That email doesn't look right.</span>
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone or WhatsApp</label>
+          <input id="phone" name="phone" type="tel" maxlength="24" autocomplete="tel">
+          <span class="hint">Optional — only used to schedule your interview.</span>
+        </div>
+
+        <div class="field">
+          <label for="university">University <span class="req">*</span></label>
+          <select id="university" name="university" required>
+            <option value="">Select your university</option>
+            <option value="REC">Rajalakshmi Engineering College (REC)</option>
+            <option value="SNU">Shiv Nadar University (SNU)</option>
+            <option value="AU">Anurag University (AU)</option>
+          </select>
+          <span class="err">Pick your university.</span>
+        </div>
+
+        <div class="field">
+          <label for="year_of_study">Year of study <span class="req">*</span></label>
+          <select id="year_of_study" name="year_of_study" required>
+            <option value="">Select your year</option>
+            <option value="1">First year</option>
+            <option value="2">Second year</option>
+            <option value="3">Third year</option>
+            <option value="4">Fourth year</option>
+            <option value="other">Other</option>
+          </select>
+          <span class="err">Pick your year.</span>
+        </div>
+
+        <div class="field">
+          <label for="branch">Branch or major <span class="req">*</span></label>
+          <input id="branch" name="branch" type="text" placeholder="Any branch — the council is not CS-only" required>
+          <span class="err">Tell us your branch.</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>What you're applying for</legend>
+
+        <div class="field">
+          <label>Which kind of seat? <span class="req">*</span></label>
+          <div class="radio-grid">
+            <label class="radio-card">
+              <input type="radio" name="role_type" value="lead" required>
+              <span><b>Team Lead</b>Runs a team, owns its outcomes, reports to the board. Expect real accountability.</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="role_type" value="associate">
+              <span><b>Associate</b>Works inside a team on its programmes. The best way in if you're new to this.</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="role_type" value="either">
+              <span><b>Either</b>Put me where I'm most useful.</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="role_type" value="board">
+              <span><b>Board seat</b>Campus representative for SNU or AU. Governance-level, one per campus.</span>
+            </label>
+          </div>
+          <span class="err">Pick the kind of seat you want.</span>
+        </div>
+
+        <div class="field">
+          <label for="team_first">First-choice team <span class="req">*</span></label>
+          <select id="team_first" name="team_first" required>
+            <option value="">Select a team</option>
+            <option value="skill_tracks">Skill Tracks — designs and runs cohort curricula, reviews shipped projects</option>
+            <option value="build_nights">Hackathons &amp; Build Nights — weekly builds, inter-university challenge, Build Summit</option>
+            <option value="design_creative">Design &amp; Creative — brand, event visuals, certificates, publication design</option>
+            <option value="platform_infra">Platform &amp; Infrastructure — this website, the enrolment portal, the code repository</option>
+            <option value="certification_asu">Certification &amp; ASU Liaison — certification cohorts, office hours, pathway tracking</option>
+            <option value="industry_alumni">Industry &amp; Alumni Relations — mentors, speakers, sponsors, alumni at ASU</option>
+            <option value="pr_outreach">PR &amp; Outreach — recruitment across all three campuses, social, member comms</option>
+          </select>
+          <span class="err">Pick your first choice.</span>
+        </div>
+
+        <div class="field">
+          <label for="team_second">Second choice</label>
+          <select id="team_second" name="team_second">
+            <option value="none">No second choice</option>
+            <option value="skill_tracks">Skill Tracks</option>
+            <option value="build_nights">Hackathons &amp; Build Nights</option>
+            <option value="design_creative">Design &amp; Creative</option>
+            <option value="platform_infra">Platform &amp; Infrastructure</option>
+            <option value="certification_asu">Certification &amp; ASU Liaison</option>
+            <option value="industry_alumni">Industry &amp; Alumni Relations</option>
+            <option value="pr_outreach">PR &amp; Outreach</option>
+          </select>
+          <span class="hint">Teams are small at launch, so a second choice genuinely helps.</span>
+        </div>
+
+        <div class="field">
+          <label for="hours_per_week">Hours a week you can realistically give <span class="req">*</span></label>
+          <select id="hours_per_week" name="hours_per_week" required>
+            <option value="">Select honestly</option>
+            <option value="1-3">1–3 hours</option>
+            <option value="4-6">4–6 hours</option>
+            <option value="7-10">7–10 hours</option>
+            <option value="10+">More than 10 hours</option>
+          </select>
+          <span class="hint">Say what's true during exam weeks, not your best week. Over-promising helps nobody.</span>
+          <span class="err">Give us a realistic number.</span>
+        </div>
+
+        <div class="field">
+          <label for="experience_level">Technical level</label>
+          <select id="experience_level" name="experience_level">
+            <option value="none">None — I've never written code</option>
+            <option value="some">Some — I've written a bit</option>
+            <option value="comfortable">Comfortable — I build things</option>
+            <option value="advanced">Advanced — I could teach a track</option>
+          </select>
+          <span class="hint">Several teams need organisers, writers and designers more than they need coders.</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>The part that actually decides it</legend>
+
+        <div class="field">
+          <label for="why_join">Why do you want this? <span class="req">*</span></label>
+          <textarea id="why_join" name="why_join" rows="5" maxlength="1200" required
+            placeholder="What pulled you toward the council rather than just attending events? Be specific — 'I want to build my resume' is honest but tells us nothing about you."></textarea>
+          <div class="counter" data-count-for="why_join"></div>
+          <span class="hint">A few sentences minimum. We read this one first.</span>
+          <span class="err">Give us a few real sentences here.</span>
+        </div>
+
+        <div class="field">
+          <label for="relevant_experience">What have you actually done that's relevant? <span class="req">*</span></label>
+          <textarea id="relevant_experience" name="relevant_experience" rows="5" maxlength="1200" required
+            placeholder="Projects, events you've organised, clubs, teaching, design work, writing, anything you've shipped or run. Half-finished counts — say what happened and what you learned."></textarea>
+          <div class="counter" data-count-for="relevant_experience"></div>
+          <span class="hint">Not a CV. One or two things you actually did, described plainly.</span>
+          <span class="err">Tell us about at least one thing you've done.</span>
+        </div>
+
+        <div class="field">
+          <label for="what_you_would_build">If you got this seat, what's the first thing you'd build or change?</label>
+          <textarea id="what_you_would_build" name="what_you_would_build" rows="4" maxlength="1200"
+            placeholder="Optional, but it's the answer that most often gets someone shortlisted. One concrete idea beats five vague ones."></textarea>
+          <div class="counter" data-count-for="what_you_would_build"></div>
+        </div>
+
+        <div class="field">
+          <label for="leadership_history">Have you led or organised anything before?</label>
+          <textarea id="leadership_history" name="leadership_history" rows="3" maxlength="800"
+            placeholder="Optional — school or college roles, event teams, project leads. 'No, but here's why I'd be good at it' is a perfectly acceptable answer."></textarea>
+          <div class="counter" data-count-for="leadership_history"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Links &amp; Launch Day</legend>
+
+        <div class="field">
+          <label for="portfolio_url">GitHub, portfolio or work sample</label>
+          <input id="portfolio_url" name="portfolio_url" type="url" placeholder="https://…">
+          <span class="hint">Optional. Design work, writing and event photos all count.</span>
+          <span class="err">That link needs to start with http:// or https://</span>
+        </div>
+
+        <div class="field">
+          <label for="linkedin_url">LinkedIn</label>
+          <input id="linkedin_url" name="linkedin_url" type="url" placeholder="https://linkedin.com/in/…">
+          <span class="err">That link needs to start with http:// or https://</span>
+        </div>
+
+        <div class="field">
+          <div class="checkline">
+            <input id="attending_launch" name="attending_launch" type="checkbox" checked>
+            <label for="attending_launch" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+              Count me in for Launch Day at my campus as well
+            </label>
+          </div>
+          <span class="hint">Council or not, you're welcome on the day. Ticking this registers you for it too.</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Consent</legend>
+        <div class="field">
+          <div class="checkline">
+            <input id="consent" name="consent" type="checkbox" required>
+            <label for="consent" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+              I agree that the council may store this application, including my written answers, to run the
+              selection process. It is never shared outside the council without my consent, and I can ask for it
+              to be deleted at any time. <span class="req">*</span>
+            </label>
+          </div>
+          <span class="err">We need this to store your application.</span>
+        </div>
+      </fieldset>
+
+      <div class="hp" aria-hidden="true">
+        <label for="company">Company</label>
+        <input id="company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div id="turnstile-slot"></div>
+
+      <button class="btn big" type="submit">Submit application</button>
+
+      <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+    </form>
+
+    <p style="margin-top:30px;color:var(--muted);font-size:15px">
+      Not sure about a seat yet? <a href="launch.html">Just register for Launch Day →</a>
+    </p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-col">
+      <h5>Council</h5>
+      <a href="index.html#programme">Programme</a>
+      <a href="index.html#council">Teams</a>
+      <a href="index.html#tiers">Membership</a>
+      <a href="launch.html">Launch Day</a>
+    </div>
+    <div class="f-col">
+      <h5>Contact</h5>
+      <a href="mailto:techskillscouncil@gmail.com">techskillscouncil@gmail.com</a>
+      <a href="https://github.com/tech-skills-council">GitHub</a>
+    </div>
+    <p class="f-legal">
+      Tech &amp; Skills Council — an official programme of the ASU Cintana Alliance, in partnership with Arizona State
+      University. © <span id="year">2026</span> Tech &amp; Skills Council.
+    </p>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/forms.js"></script>
+</body>
+</html>

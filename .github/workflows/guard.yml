@@ -1,0 +1,65 @@
+name: Secret guard
+
+# Looks for real credentials, not for the words that describe them.
+# The earlier version failed on the phrase "service-role key" appearing
+# in the README; this one only trips on things that are actually secret.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for committed credentials
+        run: |
+          set -uo pipefail
+          fail=0
+
+          # 1. private key blocks, anywhere
+          if grep -rIn --exclude-dir=.git -E "BEGIN [A-Z ]*PRIVATE KEY" . ; then
+            echo "::error::A private key block is committed."
+            fail=1
+          fi
+
+          # 2. Supabase secret keys, by their real prefix
+          if grep -rIn --exclude-dir=.git -E "sb_secret_[A-Za-z0-9_-]{16,}" . ; then
+            echo "::error::A Supabase secret key looks committed."
+            fail=1
+          fi
+
+          # 3. Resend keys, by their real prefix
+          if grep -rIn --exclude-dir=.git -E "re_[A-Za-z0-9]{20,}" . ; then
+            echo "::error::A Resend API key looks committed."
+            fail=1
+          fi
+
+          # 4. a JWT whose decoded payload actually claims service_role
+          for f in $(grep -rIl --exclude-dir=.git -E "eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}" . 2>/dev/null || true); do
+            for tok in $(grep -ohE "eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}" "$f" 2>/dev/null || true); do
+              payload=$(printf '%s' "$tok" | cut -d. -f2)
+              pad=$(( (4 - ${#payload} % 4) % 4 ))
+              decoded=$(printf '%s%*s' "$payload" "$pad" "" | tr ' ' '=' | base64 -d 2>/dev/null || true)
+              if printf '%s' "$decoded" | grep -q "service_role"; then
+                echo "::error file=$f::A service-role JWT is committed in $f."
+                fail=1
+              fi
+            done
+          done
+
+          # 5. server-side secrets given a value in code
+          if grep -rIn --exclude-dir=.git -E "(RESEND_API_KEY|SERVICE_ROLE_KEY|TURNSTILE_SECRET|IP_SALT)[[:space:]]*[:=][[:space:]]*[\"'][^\"']{8,}[\"']" . ; then
+            echo "::error::A server-side secret appears to have a real value committed."
+            fail=1
+          fi
+
+          if [ "$fail" -eq 1 ]; then
+            echo "Remove the credential, rotate it in the provider, then push again."
+            exit 1
+          fi
+          echo "Clean — no credentials found."

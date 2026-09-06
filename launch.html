@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Register for Launch Day — Tech &amp; Skills Council</title>
+<meta name="description" content="Register for TSC Launch Day — one day, three campuses, and you leave with something you built. Open to every branch, no coding experience assumed.">
+<meta name="theme-color" content="#8C1D40">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="index.html" aria-label="Tech and Skills Council — home">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18 8 H8 V56 H18" fill="none" stroke="#FFC627" stroke-width="5" stroke-linecap="square"/>
+        <path d="M46 8 H56 V56 H46" fill="none" stroke="#FFC627" stroke-width="5" stroke-linecap="square"/>
+        <rect x="22" y="41" width="22" height="7" fill="#FFFFFF"/>
+        <rect x="22" y="30" width="16" height="7" fill="#FFFFFF"/>
+        <rect x="22" y="19" width="10" height="7" fill="#FFFFFF"/>
+      </svg>
+      <span>Tech &amp; Skills Council</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#programme">Programme</a>
+      <a href="index.html#launch">Launch Day</a>
+      <a href="index.html#faq">FAQ</a>
+      <a class="btn" href="council.html">Join the council</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:64px 0 44px">
+  <div class="wrap">
+    <div class="hero-tag">
+      <span class="tag solid">Powered by ASU · Cintana Alliance</span>
+      <span class="tag gold">Launch Day</span>
+      <span class="tag">REC · SNU · AU</span>
+    </div>
+    <h1 class="hero-title" style="font-size:clamp(42px,8vw,96px)">Register</h1>
+    <p class="hero-lede">
+      Two minutes. One day, four to five hours, at your own campus and live with the other two.
+      You leave with a project on a real URL, your first GitHub commit and a credential you can post the same evening.
+    </p>
+    <p class="hero-note" id="date-note">Date and venues are announced by email as soon as they are confirmed.</p>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap form-wrap">
+    <p class="form-intro">
+      Open to every student on an active Cintana Alliance / ASU pathway at REC, Shiv Nadar University or
+      Anurag University — every branch, every year, <strong style="color:var(--gold);font-weight:400">no coding
+      experience assumed</strong>. Registering also puts you on the list for Coding Foundations cohort one.
+    </p>
+
+    <form id="launch-form" data-tsc-form="launch" novalidate>
+
+      <fieldset>
+        <legend>You</legend>
+
+        <div class="field">
+          <label for="full_name">Full name <span class="req">*</span></label>
+          <input id="full_name" name="full_name" type="text" autocomplete="name" required>
+          <span class="err">Tell us what to call you.</span>
+        </div>
+
+        <div class="field">
+          <label for="email">Email <span class="req">*</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+          <span class="hint">Use the address you actually check — your venue, joining link and credential all go here.</span>
+          <span class="err">That email doesn't look right.</span>
+        </div>
+
+        <div class="field">
+          <label for="university">University <span class="req">*</span></label>
+          <select id="university" name="university" required>
+            <option value="">Select your university</option>
+            <option value="REC">Rajalakshmi Engineering College (REC)</option>
+            <option value="SNU">Shiv Nadar University (SNU)</option>
+            <option value="AU">Anurag University (AU)</option>
+          </select>
+          <span class="err">Pick your university — it decides which campus room you're in.</span>
+        </div>
+
+        <div class="field">
+          <label for="year_of_study">Year of study <span class="req">*</span></label>
+          <select id="year_of_study" name="year_of_study" required>
+            <option value="">Select your year</option>
+            <option value="1">First year</option>
+            <option value="2">Second year</option>
+            <option value="3">Third year</option>
+            <option value="4">Fourth year</option>
+            <option value="other">Other</option>
+          </select>
+          <span class="err">Pick your year.</span>
+        </div>
+
+        <div class="field">
+          <label for="branch">Branch or major <span class="req">*</span></label>
+          <input id="branch" name="branch" type="text" placeholder="Any branch — this is not a CS-only council" required>
+          <span class="err">Tell us your branch.</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>The day itself</legend>
+
+        <div class="field">
+          <label for="experience">Where are you starting from?</label>
+          <select id="experience" name="experience">
+            <option value="none">Nowhere — I've never written code</option>
+            <option value="some">A little — I've written some code</option>
+            <option value="comfortable">Comfortable — I build things already</option>
+          </select>
+          <span class="hint">No wrong answer. It only decides which Build Day Zero track you start on.</span>
+        </div>
+
+        <div class="field">
+          <div class="checkline">
+            <input id="bringing_laptop" name="bringing_laptop" type="checkbox" checked>
+            <label for="bringing_laptop" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+              I can bring a laptop
+            </label>
+          </div>
+          <span class="hint">If you can't, say so — we'll pair you up rather than leave you out.</span>
+        </div>
+
+        <div class="field">
+          <label for="dietary">Anything we should know for refreshments?</label>
+          <input id="dietary" name="dietary" type="text" maxlength="120" placeholder="Optional — allergies, preferences">
+        </div>
+
+        <div class="field">
+          <label for="hear_about">How did you hear about this?</label>
+          <select id="hear_about" name="hear_about">
+            <option value="">Select one</option>
+            <option value="poster">A poster on campus</option>
+            <option value="instagram">Instagram</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="friend">A friend or classmate</option>
+            <option value="faculty">Faculty or department</option>
+            <option value="other">Somewhere else</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="interests">What would you like to build or learn?</label>
+          <textarea id="interests" name="interests" rows="3" maxlength="500" placeholder="Optional — AI/ML, cloud, full-stack, data, or something specific you have in mind"></textarea>
+          <div class="counter" data-count-for="interests"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Consent</legend>
+        <div class="field">
+          <div class="checkline">
+            <input id="consent" name="consent" type="checkbox" required>
+            <label for="consent" style="font-family:inherit;font-size:15px;letter-spacing:0;text-transform:none;color:var(--muted)">
+              I agree that the council may store these details to run Launch Day and manage my membership.
+              They are never shared outside the council without my consent, and I can ask for them to be deleted at any time. <span class="req">*</span>
+            </label>
+          </div>
+          <span class="err">We need this to store your registration.</span>
+        </div>
+      </fieldset>
+
+      <div class="hp" aria-hidden="true">
+        <label for="company">Company</label>
+        <input id="company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div id="turnstile-slot"></div>
+
+      <button class="btn big" type="submit">Register</button>
+
+      <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+    </form>
+
+    <p style="margin-top:30px;color:var(--muted);font-size:15px">
+      Want to help run the council rather than just attend?
+      <a href="council.html">Apply for a council seat →</a>
+    </p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-col">
+      <h5>Council</h5>
+      <a href="index.html#programme">Programme</a>
+      <a href="index.html#launch">Launch Day</a>
+      <a href="index.html#tiers">Membership</a>
+      <a href="council.html">Apply to the council</a>
+    </div>
+    <div class="f-col">
+      <h5>Contact</h5>
+      <a href="mailto:techskillscouncil@gmail.com">techskillscouncil@gmail.com</a>
+      <a href="https://github.com/tech-skills-council">GitHub</a>
+    </div>
+    <p class="f-legal">
+      Tech &amp; Skills Council — an official programme of the ASU Cintana Alliance, in partnership with Arizona State
+      University. © <span id="year">2026</span> Tech &amp; Skills Council.
+    </p>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/forms.js"></script>
+<script>
+  (function () {
+    var cfg = window.TSC_CONFIG || {};
+    if (cfg.LAUNCH_DATE_LABEL) {
+      document.getElementById('date-note').textContent =
+        cfg.LAUNCH_DATE_LABEL + (cfg.LAUNCH_TIME_LABEL ? ' · ' + cfg.LAUNCH_TIME_LABEL : '');
+    }
+  })();
+</script>
+</body>
+</html>
