@@ -273,17 +273,12 @@
       })
       .then(function (r) {
         if (r.status === 201 || r.status === 200) {
-          form.reset();
-          form.querySelectorAll('.radio-card').forEach(function (c) { c.classList.remove('checked'); });
-          if (r.body.duplicate) {
-            say('ok', 'You are already on the list with that email — nothing more to do.');
-          } else if (kind === 'council') {
-            say('ok', 'Application received. You will hear from us by email at ' + data.email +
-                      ' about the next round — check your spam folder if nothing lands in a few days.');
-          } else {
-            say('ok', 'You are registered. Confirmation is on its way to ' + data.email +
-                      ', and we will email the date and your campus venue as soon as they are confirmed.');
-          }
+          var qs = new URLSearchParams({
+            'for': kind,
+            email: data.email || '',
+            dup: r.body.duplicate ? '1' : '0'
+          });
+          window.location.href = 'thanks.html?' + qs.toString();
           return;
         }
         if (r.status === 429) {
