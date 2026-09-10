@@ -29,6 +29,7 @@ create table if not exists public.launch_registrations (
   dietary           text     check (dietary is null or char_length(dietary) <= 120),
   hear_about        text     check (hear_about is null or char_length(hear_about) <= 40),
   interests         text     check (interests is null or char_length(interests) <= 500),
+  on_asu_pathway    text     check (on_asu_pathway in ('yes','no')),
 
   attended          boolean  not null default false,
   status            text     not null default 'registered'
@@ -76,6 +77,7 @@ create table if not exists public.council_applications (
   linkedin_url          text     check (linkedin_url is null or linkedin_url ~* '^https?://'),
 
   attending_launch      boolean  not null default false,
+  on_asu_pathway        text     check (on_asu_pathway in ('yes','no')),
 
   -- review workflow
   status                text not null default 'new'
@@ -87,6 +89,16 @@ create unique index if not exists council_email_key
   on public.council_applications (lower(email));
 create index if not exists council_team_idx
   on public.council_applications (team_first, status, created_at desc);
+
+-- ------------------------------------------------------------
+-- 2a. Migration: add on_asu_pathway to tables created before it
+-- existed. Safe to re-run — a fresh install already has the column
+-- from the create table statements above.
+-- ------------------------------------------------------------
+alter table public.launch_registrations
+  add column if not exists on_asu_pathway text check (on_asu_pathway in ('yes','no'));
+alter table public.council_applications
+  add column if not exists on_asu_pathway text check (on_asu_pathway in ('yes','no'));
 
 -- ------------------------------------------------------------
 -- 3. Rate limiting (per IP hash, sliding window)

@@ -108,6 +108,17 @@
           <input id="branch" name="branch" type="text" placeholder="Any branch — this is not a CS-only council" required>
           <span class="err">Enter your branch or major.</span>
         </div>
+
+        <div class="field">
+          <label for="on_asu_pathway">Are you on the ASU / Cintana Alliance pathway? <span class="req">*</span></label>
+          <select id="on_asu_pathway" name="on_asu_pathway" required>
+            <option value="">Select one</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+          <span class="hint">Membership is open to students on an active pathway — a "no" won't block Launch Day itself, but it helps us route you correctly.</span>
+          <span class="err">Let us know whether you're on the ASU / Cintana pathway.</span>
+        </div>
       </fieldset>
 
       <fieldset>
@@ -221,7 +232,8 @@
     var cfg = window.TSC_CONFIG || {};
     if (cfg.LAUNCH_DATE_LABEL) {
       document.getElementById('date-note').textContent =
-        cfg.LAUNCH_DATE_LABEL + (cfg.LAUNCH_TIME_LABEL ? ' · ' + cfg.LAUNCH_TIME_LABEL : '');
+        cfg.LAUNCH_DATE_LABEL + (cfg.LAUNCH_TIME_LABEL ? ' · ' + cfg.LAUNCH_TIME_LABEL : '') +
+        ' — venue confirmed by email closer to the date.';
     }
   })();
 </script>

@@ -46,12 +46,14 @@ const ALLOWED_HOSTNAMES = [
 ];
 
 const RATE_WINDOW_MINUTES = 10;
-/* Campus networks put hundreds of students behind a single public IP. A limit
-   tuned for one person per address (5) would reject most of a computer lab or
-   hostel block the moment a poster goes up — the exact situation this is built
-   for. Turnstile is the real bot gate; this only has to stop a scripted flood,
-   so it is set well above any plausible burst of genuine sign-ups. */
-const RATE_MAX_PER_WINDOW = 40;
+/* Campus networks put hundreds of students behind a single public IP, and a
+   poster or a live announcement can send a whole lecture hall to the form at
+   once — Launch Day itself is exactly that scenario across three campuses.
+   A limit tuned for one person per address (5) would reject most of a
+   computer lab or hostel block within minutes. Turnstile is the real bot
+   gate; this only has to stop a scripted flood, so it is set well above any
+   plausible burst of genuine sign-ups sharing one campus IP. */
+const RATE_MAX_PER_WINDOW = 150;
 const MAX_BODY_BYTES = 16000;
 
 const UNIVERSITIES = ["REC", "SNU", "AU"];
@@ -62,6 +64,7 @@ const TEAMS = [
 ];
 const ROLE_TYPES = ["lead", "associate", "either", "board"];
 const HOURS = ["1-3", "4-6", "7-10", "10+"];
+const YES_NO = ["yes", "no"];
 
 const TEAM_LABELS: Record<string, string> = {
   skill_tracks: "Skill Tracks",
@@ -94,6 +97,24 @@ function json(body: unknown, status: number, headers: Record<string, string>) {
 const str = (v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
 const oneOf = (v: string, list: string[]) => (list.includes(v) ? v : "");
 const nullIfEmpty = (v: string) => (v.length ? v : null);
+
+/* The client's own X-Forwarded-For entry is whatever it chooses to send —
+   trusting the FIRST entry lets anyone defeat the rate limit by sending a
+   fresh fake address on every request. Each trusted hop APPENDS its view of
+   the previous hop, so the entry that actually matters — the one our own
+   platform proxy observed — is the LAST one, not the first. cf-connecting-ip,
+   when present, is set by Cloudflare's own edge and cannot be spoofed by the
+   client at all, so it is preferred when available. */
+function clientIp(req: Request): string {
+  const cf = req.headers.get("cf-connecting-ip");
+  if (cf && cf.trim()) return cf.trim();
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) {
+    const parts = xff.split(",").map((s) => s.trim()).filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
+  }
+  return "unknown";
+}
 
 async function hashIp(ip: string): Promise<string> {
   const data = new TextEncoder().encode(IP_SALT + "|" + ip);
@@ -145,6 +166,7 @@ function validateLaunch(b: Record<string, unknown>): Result {
     dietary: nullIfEmpty(str(b.dietary, 120)),
     hear_about: nullIfEmpty(str(b.hear_about, 40)),
     interests: nullIfEmpty(str(b.interests, 500)),
+    on_asu_pathway: oneOf(str(b.on_asu_pathway, 4), YES_NO),
     status: "registered",
   };
   if (row.full_name.length < 2) return { ok: false, error: "full_name" };
@@ -152,6 +174,8 @@ function validateLaunch(b: Record<string, unknown>): Result {
   if (!row.university) return { ok: false, error: "university" };
   if (!row.year_of_study) return { ok: false, error: "year_of_study" };
   if (row.branch.length < 2) return { ok: false, error: "branch" };
+  if (!row.on_asu_pathway) return { ok: false, error: "on_asu_pathway" };
+  if (!Boolean(b.consent)) return { ok: false, error: "consent" };
   return { ok: true, row };
 }
 
@@ -182,6 +206,7 @@ function validateCouncil(b: Record<string, unknown>): Result {
     linkedin_url: nullIfEmpty(str(b.linkedin_url, 200)),
 
     attending_launch: Boolean(b.attending_launch),
+    on_asu_pathway: oneOf(str(b.on_asu_pathway, 4), YES_NO),
     status: "new",
   };
 
@@ -195,9 +220,11 @@ function validateCouncil(b: Record<string, unknown>): Result {
   if (!row.hours_per_week) return { ok: false, error: "hours_per_week" };
   if (row.why_join.length < 80) return { ok: false, error: "why_join" };
   if (row.relevant_experience.length < 60) return { ok: false, error: "relevant_experience" };
+  if (!row.on_asu_pathway) return { ok: false, error: "on_asu_pathway" };
   for (const u of [row.portfolio_url, row.linkedin_url]) {
     if (u && !/^https?:\/\/.+\..+/.test(u)) return { ok: false, error: "url" };
   }
+  if (!Boolean(b.consent)) return { ok: false, error: "consent" };
   return { ok: true, row };
 }
 
@@ -226,6 +253,7 @@ function emailHtml(form: string, row: Record<string, unknown>) {
       ["Portfolio", row.portfolio_url],
       ["LinkedIn", row.linkedin_url],
       ["Coming to Launch Day", row.attending_launch ? "Yes" : "No"],
+      ["On the ASU / Cintana pathway", row.on_asu_pathway],
     ]
     : [
       ["Name", row.full_name],
@@ -238,6 +266,7 @@ function emailHtml(form: string, row: Record<string, unknown>) {
       ["Dietary needs", row.dietary],
       ["Heard about us via", row.hear_about],
       ["Wants to build", row.interests],
+      ["On the ASU / Cintana pathway", row.on_asu_pathway],
     ];
 
   const table = rows.map(([k, v]) =>
@@ -338,8 +367,8 @@ Deno.serve(async (req: Request) => {
     const fd = new FormData();
     fd.append("secret", TURNSTILE_SECRET);
     fd.append("response", str(body.turnstile_token, 4000));
-    const ip = req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for") ?? "";
-    if (ip) fd.append("remoteip", ip.split(",")[0].trim());
+    const ip = clientIp(req);
+    if (ip && ip !== "unknown") fd.append("remoteip", ip);
 
     const verify = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
@@ -358,8 +387,7 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  const rawIp = (req.headers.get("x-forwarded-for") ?? req.headers.get("cf-connecting-ip") ?? "unknown")
-    .split(",")[0].trim();
+  const rawIp = clientIp(req);
   const ipHash = await hashIp(rawIp);
   const recent = await rpc("recent_submits", { p_ip_hash: ipHash, p_minutes: RATE_WINDOW_MINUTES });
   if (typeof recent === "number" && recent >= RATE_MAX_PER_WINDOW) {

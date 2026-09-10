@@ -14,7 +14,7 @@ window.TSC_CONFIG = {
   CONTACT_EMAIL: 'techskillscouncil@gmail.com',
   SITE_URL: 'https://tech-skills-council.github.io',
 
-  // Launch Day — fill in once the Cintana Alliance approval clears
-  LAUNCH_DATE_LABEL: '',
+  // Launch Day — confirmed 7 September 2026
+  LAUNCH_DATE_LABEL: 'Friday, 18 September 2026',
   LAUNCH_TIME_LABEL: ''
 };

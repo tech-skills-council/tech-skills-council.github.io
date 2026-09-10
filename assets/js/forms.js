@@ -71,6 +71,7 @@
     leadership_history: 'your leadership history',
     portfolio_url: 'your portfolio link',
     linkedin_url: 'your LinkedIn link',
+    on_asu_pathway: 'whether you are on the ASU / Cintana pathway',
     consent: 'the consent box'
   };
 
@@ -114,7 +115,9 @@
       bringing_laptop: !!fd.get('bringing_laptop'),
       dietary: val(fd, 'dietary', 120),
       hear_about: val(fd, 'hear_about', 40),
-      interests: val(fd, 'interests', 500)
+      interests: val(fd, 'interests', 500),
+      on_asu_pathway: val(fd, 'on_asu_pathway', 4),
+      consent: !!fd.get('consent')
     };
   }
 
@@ -143,14 +146,17 @@
       linkedin_url: val(fd, 'linkedin_url', 200),
 
       attending_launch: !!fd.get('attending_launch'),
-      leadership_history: val(fd, 'leadership_history', 800)
+      leadership_history: val(fd, 'leadership_history', 800),
+      on_asu_pathway: val(fd, 'on_asu_pathway', 4),
+      consent: !!fd.get('consent')
     };
   }
 
   var REQUIRED = {
-    launch: ['full_name', 'email', 'university', 'year_of_study', 'branch'],
+    launch: ['full_name', 'email', 'university', 'year_of_study', 'branch', 'on_asu_pathway'],
     council: ['full_name', 'email', 'university', 'year_of_study', 'branch',
-              'role_type', 'team_first', 'hours_per_week', 'why_join', 'relevant_experience']
+              'role_type', 'team_first', 'hours_per_week', 'why_join', 'relevant_experience',
+              'on_asu_pathway']
   };
 
   /* Allowed values, mirroring the edge function exactly. These are checked by
@@ -167,7 +173,8 @@
     team_first:       ['skill_tracks', 'build_nights', 'design_creative', 'platform_infra',
                        'certification_asu', 'industry_alumni', 'pr_outreach'],
     team_second:      ['skill_tracks', 'build_nights', 'design_creative', 'platform_infra',
-                       'certification_asu', 'industry_alumni', 'pr_outreach', 'none']
+                       'certification_asu', 'industry_alumni', 'pr_outreach', 'none'],
+    on_asu_pathway:   ['yes', 'no']
   };
 
   var MIN_LENGTH = { why_join: 80, relevant_experience: 60, what_you_would_build: 0 };
