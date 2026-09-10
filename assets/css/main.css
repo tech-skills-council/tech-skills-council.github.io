@@ -45,7 +45,9 @@ a{color:var(--gold);text-decoration:none}
 a:hover{color:#fff}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
-h1,h2,h3,h4{font-family:var(--display);font-weight:900;margin:0;letter-spacing:-.03em;text-wrap:balance;text-transform:uppercase}
+/* 800 rather than 900 — Archivo Black reads as a shout at display sizes; the
+   semibold cut keeps the same authority with a calmer, more formal colour. */
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.028em;text-wrap:balance;text-transform:uppercase}
 p{margin:0}
 
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 26px}
@@ -90,6 +92,12 @@ p{margin:0}
   font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
 }
 .nav-links a:hover{color:var(--gold)}
+/* `.nav-links a` (0,2,0) outranks `.btn` (0,1,0), so without this the nav CTA
+   renders muted-pink on gold — about 1.9:1, unreadable. Restate at equal reach. */
+.nav-links a.btn{color:#111}
+.nav-links a.btn:hover{color:var(--gold)}
+.nav-links a.btn.ghost{color:var(--gold)}
+.nav-links a.btn.ghost:hover{color:#111}
 .btn{
   display:inline-flex;align-items:center;gap:9px;
   font-family:var(--display);font-weight:800;font-size:13.5px;letter-spacing:.05em;text-transform:uppercase;
@@ -101,14 +109,35 @@ p{margin:0}
 .btn.ghost:hover{background:var(--gold);color:#111}
 .btn.big{font-size:16px;padding:16px 30px}
 @media(max-width:860px){.nav-links a:not(.btn){display:none}}
+/* At phone widths the wordmark wrapped to two lines and crowded the CTA. */
+@media(max-width:520px){
+  .nav .wrap{padding:0 16px;gap:12px}
+  .nav-logo span{font-size:13px;line-height:1.15;max-width:11ch}
+  .nav-logo svg{width:26px;height:26px}
+  .nav-links .btn{padding:10px 14px;font-size:12px;white-space:nowrap}
+}
 
 /* ---------- hero ---------- */
 .hero{
-  position:relative;padding:86px 0 66px;
-  background:radial-gradient(115% 130% at 84% -10%,rgba(140,29,64,.62) 0%,rgba(140,29,64,0) 60%),var(--ground);
+  position:relative;padding:104px 0 84px;
+  background:
+    radial-gradient(105% 120% at 88% -18%,rgba(140,29,64,.50) 0%,rgba(140,29,64,0) 62%),
+    var(--ground);
   border-bottom:1px solid var(--line);
 }
-.hero .wrap{display:flex;flex-direction:column;gap:26px}
+/* A single hairline rule anchoring the hero to the page — quiet, not loud. */
+.hero::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,var(--gold) 0%,rgba(255,198,39,.28) 22%,rgba(255,198,39,0) 62%);
+}
+.hero .wrap{display:flex;flex-direction:column;gap:0}
+
+.hero-kicker{
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold);padding-bottom:22px;margin-bottom:30px;
+  border-bottom:1px solid var(--line);
+}
+
 .hero-tag{display:flex;flex-wrap:wrap;gap:9px}
 .tag{
   font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
@@ -116,19 +145,56 @@ p{margin:0}
 }
 .tag.solid{background:var(--maroon);border-color:var(--maroon);color:#fff}
 .tag.gold{border-color:rgba(255,198,39,.55);color:var(--gold)}
-h1.hero-title{font-size:clamp(50px,10.5vw,132px);line-height:.86;letter-spacing:-.045em}
+
+h1.hero-title{
+  font-size:clamp(44px,8.4vw,104px);line-height:.94;letter-spacing:-.035em;
+  font-weight:800;
+}
 h1.hero-title .gold{color:var(--gold);display:block}
-.hero-lede{font-size:clamp(17px,2.2vw,21px);max-width:60ch;color:var(--text)}
+
+.hero-motto{
+  display:flex;align-items:center;gap:18px;
+  margin-top:24px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--muted);
+}
+.hero-motto::before{
+  content:"";width:56px;height:1px;background:var(--gold);flex:0 0 auto;
+}
+
+.hero-lede{font-size:clamp(16.5px,1.5vw,19px);line-height:1.7;max-width:62ch;color:var(--muted);margin-top:26px}
 .hero-lede b{font-weight:400;color:var(--gold)}
-.hero-cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:4px}
+
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:34px}
 .hero-note{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--muted-dim)}
 
+/* Institutional meta strip — the formal register of a programme masthead. */
+.hero-meta{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:0 34px;margin:46px 0 0;padding-top:26px;border-top:1px solid var(--line);
+}
+.hero-meta>div{padding:10px 0}
+.hero-meta dt{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted-dim);margin-bottom:7px;
+}
+.hero-meta dd{margin:0;font-size:14.5px;line-height:1.5;color:var(--text)}
+@media(max-width:640px){
+  .hero{padding:72px 0 60px}
+  .hero-meta{gap:0 20px;margin-top:36px}
+}
+
 /* ---------- ticker ---------- */
-.ticker{background:var(--gold);color:#111;overflow:hidden;border-block:2px solid var(--gold)}
-.ticker-track{display:flex;gap:0;width:max-content;animation:slide 26s linear infinite}
+/* Restrained: a hairline band in the council's own surface colour rather than
+   a solid gold shout, so the masthead above it stays the loudest thing. */
+.ticker{
+  background:var(--ground-2);color:var(--muted);overflow:hidden;
+  border-bottom:1px solid var(--line-soft);
+}
+.ticker-track{display:flex;gap:0;width:max-content;animation:slide 52s linear infinite}
 .ticker span{
-  font-family:var(--display);font-weight:900;font-size:15px;letter-spacing:.06em;text-transform:uppercase;
-  padding:11px 22px;white-space:nowrap;
+  font-family:var(--mono);font-weight:400;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+  padding:14px 20px;white-space:nowrap;
 }
 @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.ticker-track{animation:none}}
@@ -157,10 +223,27 @@ ul.ticks li::before{
 }
 ul.ticks li b{font-weight:400;color:var(--gold)}
 
-.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-.stat{background:var(--surface);padding:22px 24px}
-.stat .k{font-family:var(--display);font-weight:900;font-size:34px;color:var(--gold);line-height:1}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--surface);padding:22px 24px;min-width:0}
+.stat .k{
+  font-family:var(--display);font-weight:900;font-size:34px;color:var(--gold);line-height:1;
+  /* Long values must never be hyphen-broken mid-word ("Septem / 2026"). */
+  overflow-wrap:normal;word-break:normal;hyphens:none;
+}
 .stat .v{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+
+/* A stat whose value is prose-length (a full date) takes the whole row and
+   steps down to a size that fits it on one or two clean lines at any width. */
+.stat.stat-wide{grid-column:1/-1}
+.stat .k-date{
+  font-size:clamp(23px,3.2vw,34px);line-height:1.08;letter-spacing:-.02em;
+  text-wrap:balance;
+}
+
+.fineprint{
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft);
+  font-size:13.5px;line-height:1.55;color:var(--muted-dim);max-width:56ch;
+}
 
 /* timeline */
 .beats{display:flex;flex-direction:column;border:1px solid var(--line)}

@@ -14,7 +14,19 @@ window.TSC_CONFIG = {
   CONTACT_EMAIL: 'techskillscouncil@gmail.com',
   SITE_URL: 'https://tech-skills-council.github.io',
 
-  // Launch Day — confirmed 7 September 2026
+  // ---- Launch Day ----------------------------------------------------
+  // Date confirmed 7 September 2026. Everything below is written into the
+  // page at runtime, so this file is the single place to change any of it.
   LAUNCH_DATE_LABEL: 'Friday, 18 September 2026',
-  LAUNCH_TIME_LABEL: ''
+
+  // Short form used where the full date will not fit (poster caption,
+  // narrow stat cells). Leave empty to fall back to the full label.
+  LAUNCH_DATE_SHORT: '18 Sep 2026',
+
+  // Start time, e.g. '2:00 PM'. Empty until confirmed.
+  LAUNCH_TIME_LABEL: '',
+
+  // How long the session runs, as displayed. Launch Day is an opening
+  // session plus one short guided activity — not a full-day build.
+  LAUNCH_DURATION_LABEL: '~2 hrs'
 };

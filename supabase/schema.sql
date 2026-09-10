@@ -177,3 +177,31 @@ comment on table public.launch_registrations is
   'Launch Day registrations. Personal data — store securely, never share outside the council without consent, delete on request.';
 comment on table public.council_applications is
   'Council applications. Personal data, plus written answers. Same handling rules as above.';
+
+-- ------------------------------------------------------------
+-- 6. Hardening pass — 10 September 2026
+--
+-- Two pieces of leftover attack surface found during the pre-launch
+-- audit. Both are safe to re-run.
+--
+-- (a) The legacy `enrolments` table from the first version of the site
+--     is no longer written to by anything, but it still carried an
+--     "anon can enrol" INSERT policy plus grants to anon and
+--     authenticated. That is an open write door with neither Turnstile
+--     nor the rate limiter in front of it: anyone holding the project's
+--     anon key could insert unbounded rows straight into the database.
+--     It held zero rows, so nothing is lost by removing it.
+--
+-- (b) recent_submits() and prune_submit_events() are SECURITY DEFINER
+--     and were EXECUTE-able by anon and authenticated. Only the edge
+--     function ever calls them, and it does so with the service-role
+--     key. Leaving prune_submit_events() open to anon is a rate-limit
+--     bypass: wipe the ledger, then flood the form.
+-- ------------------------------------------------------------
+
+drop table if exists public.enrolments cascade;
+
+revoke all on function public.recent_submits(text, integer)
+  from anon, authenticated, public;
+revoke all on function public.prune_submit_events()
+  from anon, authenticated, public;

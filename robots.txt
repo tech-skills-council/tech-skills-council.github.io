@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /thanks.html
+
+Sitemap: https://tech-skills-council.github.io/sitemap.xml

@@ -118,6 +118,7 @@
   </div>
 </footer>
 
+<script src="config.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
   (function () {
@@ -142,11 +143,19 @@
         (email ? ' for ' + email : '') + '. The board reads every written answer before the next round.';
       nextHead.textContent = 'While the board reads your application';
     } else {
+      var cfg = window.TSC_CONFIG || {};
+      var when = cfg.LAUNCH_DATE_LABEL || '';
       titleEl.textContent = "You're registered.";
       ledeEl.textContent = 'Your Launch Day registration is in' +
-        (email ? ', ' + email : '') + '. Date and venue go out by email as soon as they are confirmed.';
+        (email ? ', ' + email : '') + '. ' +
+        (when
+          ? 'Launch Day is ' + when + ' — your campus venue is confirmed by email closer to the date.'
+          : 'Date and venue go out by email as soon as they are confirmed.');
       tagEl.textContent = 'Registered';
-      nextHead.textContent = 'While you wait for the date';
+      nextHead.textContent = when ? 'Before the day' : 'While you wait for the date';
+      if (noteEl) {
+        noteEl.textContent = 'Roughly two hours. Nothing to prepare, nothing to install.';
+      }
     }
   })();
 </script>
