@@ -21,6 +21,9 @@
 //   SERVICE_ROLE_KEY   required  — Supabase service-role key
 //   TURNSTILE_SECRET   optional  — enables captcha verification
 //   RESEND_API_KEY     optional  — enables the notification email
+//   RESEND_FROM        optional  — verified sender; defaults to Resend's
+//                                  shared onboarding@resend.dev, which can
+//                                  ONLY deliver to the Resend account owner
 //   NOTIFY_EMAIL       optional  — defaults to the council Gmail
 //   IP_SALT            optional  — salt for hashing IPs
 // ============================================================
@@ -30,6 +33,11 @@ const SERVICE_ROLE_KEY = Deno.env.get("SERVICE_ROLE_KEY") ?? "";
 const TURNSTILE_SECRET = Deno.env.get("TURNSTILE_SECRET") ?? "";
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
 const NOTIFY_EMAIL = Deno.env.get("NOTIFY_EMAIL") ?? "techskillscouncil@gmail.com";
+/* Sender. Resend's shared onboarding@resend.dev only delivers to the address
+   that owns the Resend account; once a domain is verified in Resend, set
+   RESEND_FROM to an address on it (e.g. "TSC <council@yourdomain>") and no
+   code change is needed. */
+const RESEND_FROM = Deno.env.get("RESEND_FROM") ?? "TSC Website <onboarding@resend.dev>";
 const IP_SALT = Deno.env.get("IP_SALT") ?? "tsc-default-salt-change-me";
 
 const ALLOWED_ORIGINS = [
@@ -316,27 +324,68 @@ function background(p: Promise<unknown>) {
   return p;
 }
 
+/* Sends the council a copy of each submission.
+ *
+ * A submission is NEVER failed because email is down — the row is already
+ * stored by the time this runs, and the dashboard is the source of truth.
+ * But a silent failure is its own bug: you add the key, assume it works,
+ * and find out weeks later that nothing was ever delivered. So every
+ * outcome is logged to the edge function log, where it can be read under
+ * Edge Functions -> enrol -> Logs.
+ *
+ * FROM ADDRESS — the usual reason this "works" but delivers nothing:
+ * Resend's shared onboarding@resend.dev sender is only permitted to send
+ * to the email address that owns the Resend account. Sending anywhere
+ * else is rejected with 403. So either
+ *   (a) create the Resend account with NOTIFY_EMAIL's own address, or
+ *   (b) verify a domain in Resend and set RESEND_FROM to an address on it.
+ * RESEND_FROM exists so (b) never needs a code change or a redeploy.
+ */
 async function notify(form: string, row: Record<string, unknown>) {
-  if (!RESEND_API_KEY) return;
+  if (!RESEND_API_KEY) {
+    console.warn(
+      "notify skipped: RESEND_API_KEY is not set. The submission was stored " +
+        "successfully; no email was sent.",
+    );
+    return;
+  }
+
+  const subject = form === "council"
+    ? `Council application — ${row.full_name} (${row.university})`
+    : `Launch Day registration — ${row.full_name} (${row.university})`;
+
   try {
-    await fetch("https://api.resend.com/emails", {
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "TSC Website <onboarding@resend.dev>",
+        from: RESEND_FROM,
         to: [NOTIFY_EMAIL],
         reply_to: String(row.email ?? ""),
-        subject: form === "council"
-          ? `Council application — ${row.full_name} (${row.university})`
-          : `Launch Day registration — ${row.full_name} (${row.university})`,
+        subject,
         html: emailHtml(form, row),
       }),
     });
-  } catch (_e) {
-    // never fail a submission because email is down
+
+    /* fetch() only rejects on a network-level failure. A 403 or 422 from
+       Resend resolves normally, so without this check the most likely
+       failure mode of all is completely invisible. */
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "<unreadable>");
+      console.error(
+        `notify FAILED: Resend returned ${res.status} sending "${subject}" ` +
+          `from ${RESEND_FROM} to ${NOTIFY_EMAIL}. Response: ${detail.slice(0, 400)}`,
+      );
+      return;
+    }
+
+    const body = await res.json().catch(() => ({}));
+    console.log(`notify ok: "${subject}" queued as ${body?.id ?? "unknown id"}`);
+  } catch (e) {
+    console.error(`notify FAILED (network): ${String(e).slice(0, 300)}`);
   }
 }
 

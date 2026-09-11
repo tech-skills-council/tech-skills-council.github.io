@@ -205,3 +205,32 @@ revoke all on function public.recent_submits(text, integer)
   from anon, authenticated, public;
 revoke all on function public.prune_submit_events()
   from anon, authenticated, public;
+
+-- ------------------------------------------------------------
+-- 7. Reporting-view leak — closed 11 September 2026
+--
+-- launch_counts and council_pipeline were granted SELECT (and every
+-- other privilege) to anon and authenticated, and neither had
+-- security_invoker set.
+--
+-- A Postgres view with security_invoker OFF — the default — executes
+-- with its OWNER's rights. The owner here is postgres, which bypasses
+-- row-level security. So the RLS protecting launch_registrations and
+-- council_applications was being routed around: anyone holding the
+-- project's anon key could read registration counts per university,
+-- how many absolute beginners had signed up, the council application
+-- pipeline and the timestamp of the latest submission — without ever
+-- querying the protected tables.
+--
+-- These views are for the council reading the Supabase dashboard,
+-- which connects as postgres, not as the anon/authenticated API roles.
+-- Revoking the API roles costs nothing and closes the hole.
+-- ------------------------------------------------------------
+
+revoke all on public.launch_counts    from anon, authenticated, public;
+revoke all on public.council_pipeline from anon, authenticated, public;
+
+-- Defence in depth: make the views honour the caller's RLS, so the base
+-- table policies still apply even if a grant is ever re-added.
+alter view public.launch_counts    set (security_invoker = on);
+alter view public.council_pipeline set (security_invoker = on);
