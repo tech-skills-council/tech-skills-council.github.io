@@ -440,3 +440,116 @@ legend{
 .field .radio-card.checked{border-color:var(--gold);background:var(--surface-2)}
 .field .radio-card:focus-within{border-color:var(--gold);outline:2px solid var(--gold);outline-offset:2px}
 .req{color:var(--gold)}
+
+/* ============================================================
+   Responsive hardening — 11 September 2026
+   Audited across 320 → 1920px on all four pages.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. Auto-fit grids must never demand more width than they have
+   ------------------------------------------------------------
+   `minmax(300px, 1fr)` is a *hard floor*: below 300px of available
+   space the column still claims 300px and the whole grid pushes past
+   the viewport. At 320px the wrap leaves 268px, so every grid with a
+   floor above that overflowed the page — the two-door CTA was doing it
+   by 32px. `min(<floor>, 100%)` keeps the intended multi-column
+   behaviour on wide screens and lets the column collapse gracefully
+   instead of overflowing on narrow ones. */
+.grid-3     {grid-template-columns:repeat(auto-fit,minmax(min(268px,100%),1fr))}
+.doors      {grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
+.posters    {grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}
+.cal        {grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))}
+.road       {grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
+.badges     {grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
+.radio-grid {grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))}
+.stat-row   {grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr))}
+.hero-meta  {grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr))}
+
+/* ------------------------------------------------------------
+   2. Touch targets
+   ------------------------------------------------------------
+   Checkboxes and radios rendered at 17–18px — under half the 44px
+   touch guideline, and these gate consent and team choice, so a missed
+   tap costs a submission. Enlarged on coarse pointers only, so mouse
+   users keep the tighter visual. */
+@media (pointer: coarse){
+  .field input[type="checkbox"],
+  .field input[type="radio"],
+  .checkline input,
+  .field .radio-card input{width:22px;height:22px;margin-top:0}
+  .checkline{align-items:center;gap:13px}
+  .field .radio-card{padding:15px}
+  /* give every standalone link a real target without changing the type */
+  footer .f-col a,
+  main p > a{display:inline-block;padding-block:7px}
+  .poster .cap a{display:inline-block;padding-block:10px}
+  .nav-logo{padding-block:8px}
+}
+
+/* ------------------------------------------------------------
+   3. Small-screen legibility
+   ------------------------------------------------------------
+   The mono label styles bottomed out at 10.5–11px. Uppercase mono at
+   that size is the first thing to become unreadable on a phone held at
+   arm's length, and these carry real information (the date note, the
+   ASU attribution, section eyebrows). */
+@media (max-width:520px){
+  .hero-kicker{font-size:12px;letter-spacing:.16em}
+  .eyebrow    {font-size:12px;letter-spacing:.16em}
+  .hero-note  {font-size:12.5px}
+  .tag        {font-size:11.5px;letter-spacing:.1em}
+  .stat .v    {font-size:11.5px;letter-spacing:.1em}
+  .hero-meta dt{font-size:11px;letter-spacing:.14em}
+  .f-legal    {font-size:13px}
+  .fineprint  {font-size:14px}
+  .field .hint{font-size:13.5px}
+}
+
+/* ------------------------------------------------------------
+   4. Nav fits at 320px
+   ------------------------------------------------------------
+   The wordmark plus a long CTA ("Register for Launch Day" on the
+   council page) could not both fit and pushed the page sideways.
+   Below 420px the mark alone carries the brand — a standard mobile
+   masthead — and the CTA keeps its full, unambiguous label. */
+@media (max-width:420px){
+  .nav-logo span{
+    position:absolute;width:1px;height:1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;
+  }
+  .nav .wrap{padding:0 14px;gap:10px}
+  .nav-links .btn{font-size:11.5px;padding:10px 13px;letter-spacing:.03em}
+}
+
+/* ------------------------------------------------------------
+   5. Section rhythm on phones
+   ------------------------------------------------------------
+   78px of section padding is a lot of dead scrolling on a 640px-tall
+   screen, and the 26px wrap gutter is wider than it needs to be. */
+@media (max-width:520px){
+  section{padding:52px 0}
+  .wrap{padding:0 18px}
+  .cell{padding:22px}
+  .door{padding:24px}
+  .stat{padding:18px 20px}
+  .btn.big{font-size:15px;padding:14px 22px;width:100%;justify-content:center}
+  .hero-cta{gap:11px}
+  .hero-cta .btn.big{width:100%}
+}
+
+/* ------------------------------------------------------------
+   6. Respect the notch / rounded corners on modern phones
+   ------------------------------------------------------------ */
+@supports (padding: max(0px)){
+  .wrap{
+    padding-left:max(18px, env(safe-area-inset-left));
+    padding-right:max(18px, env(safe-area-inset-right));
+  }
+  @media (min-width:521px){
+    .wrap{
+      padding-left:max(26px, env(safe-area-inset-left));
+      padding-right:max(26px, env(safe-area-inset-right));
+    }
+  }
+}
