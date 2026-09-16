@@ -111,29 +111,28 @@ EMAIL = "techskillscouncil@gmail.com"
 
 FACTS = [
     ("When", DATE_LINE,
-     "Approximately two hours, in one sitting. Exact start time and campus "
-     "venue are confirmed by email after you register."),
-    ("Where", "All three campuses",
-     "Held on the ground at REC, Shiv Nadar and Anurag simultaneously, "
-     "joined on a single live stream."),
-    ("Who", "Every branch, every year",
-     "Open to students on the Cintana Alliance / ASU pathway. No prior "
-     "coding experience is assumed or required."),
+     "9:00 PM IST, for about two hours. Runs online — the joining link is "
+     "emailed to you after you register."),
+    ("Where", "Online, one room",
+     "Students from REC, Shiv Nadar and Anurag all join the same session, "
+     "so you meet the people on your own pathway."),
+    ("Who", "ASU Pathway students",
+     "Every branch, every year. No prior coding experience is assumed or "
+     "required."),
     ("Cost", "Free",
-     "Registration is required so that campus seating and materials can be "
-     "planned in advance."),
+     "Registration is required — it is how the joining link reaches you."),
 ]
 
 BLOCKS = [
-    ("01", "Opening address",
-     "What the council is and why it exists, the pathway to Arizona State, "
-     "the six standing pillars, and how membership works."),
-    ("02", "A short technical activity",
-     "One guided introductory exercise in mixed teams across the three "
-     "universities. Nothing to install, nothing to prepare."),
-    ("03", "What happens next",
-     "Enrolment in Coding Foundations and the first Skill Track, when Build "
-     "Nights begin, and how council applications are read."),
+    ("01", "Icebreakers",
+     "We open with something to do rather than something to watch, and a "
+     "bit of recognition for whoever comes out on top."),
+    ("02", "The club, and the year",
+     "What the club is, the skill tracks and build sessions planned, how "
+     "membership works, and how to put yourself forward as a co-lead."),
+    ("03", "Chief guest, live",
+     "A senior from our own batch, now at Arizona State, on the technical "
+     "skills that actually matter — and your questions."),
 ]
 
 
@@ -162,12 +161,12 @@ def build():
     # Rule + standfirst.
     y = 760
     d.rectangle([MARGIN, y + 26, MARGIN + 140, y + 32], fill=WHITE)
-    d.text((MARGIN + 190, y), "Three campuses. One opening session.",
+    d.text((MARGIN + 190, y), "Three universities. One room, online.",
            font=f(BOLD, 54), fill=WHITE)
 
     # Date, stated once, loudly, in the masthead where it cannot be missed.
     y = 852
-    d.text((MARGIN + 190, y), DATE_LINE, font=f(REG, 46), fill=(246, 222, 231))
+    d.text((MARGIN + 190, y), DATE_LINE + "  ·  9:00 PM IST", font=f(REG, 44), fill=(246, 222, 231))
 
     # Gold seam under the masthead.
     d.rectangle([0, head_h, W, head_h + 22], fill=GOLD)
@@ -176,15 +175,15 @@ def build():
     y = head_h + 120
     fl = f(BOLD, 70)
     for line in wrap(d,
-                     "An introduction to the council, the pathway, and the "
-                     "year ahead.", fl, W - 2 * MARGIN):
+                     "An introduction to the club, the pathway, and the year "
+                     "ahead.", fl, W - 2 * MARGIN):
         d.text((MARGIN, y), line, font=fl, fill=INK)
         y += 86
 
     y += 22
     y = para(d, (MARGIN, y),
-             "Not a hackathon and not a workshop series — the council's first "
-             "public session, closing with one short guided technical activity.",
+             "Not a hackathon and not a workshop series — the club's first "
+             "public session, closing with a live Q&A with our chief guest.",
              f(REG, 42), BODY, W - 2 * MARGIN, 56)
 
     # ---------- fact grid (2 x 2) ---------------------------------------
@@ -235,13 +234,13 @@ def build():
     y += bh + 48
 
     # ---------- honesty strip -------------------------------------------
-    note_txt = ("No certificate, credential or prize is issued on the day. "
-                "Recognition is earned afterwards, through the tracks.")
+    note_txt = ("Open to ASU Pathway students for now. You sign in with your "
+                "university email to register.")
     fnote = f(REG, 34)
     strip_h = 96 + para_h(d, note_txt, fnote, W - 2 * MARGIN - 88, 46)
     d.rectangle([MARGIN, y, W - MARGIN, y + strip_h], fill=WHITE,
                 outline=RULE, width=3)
-    text(d, (MARGIN + 44, y + 34), "PLEASE NOTE", f(BOLD, 28), MAROON, tracking=6)
+    text(d, (MARGIN + 44, y + 34), "WHO CAN JOIN", f(BOLD, 28), MAROON, tracking=6)
     para(d, (MARGIN + 44, y + 82), note_txt, fnote, BODY,
          W - 2 * MARGIN - 88, 46)
     content_bottom = y + strip_h

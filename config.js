@@ -24,9 +24,13 @@ window.TSC_CONFIG = {
   LAUNCH_DATE_SHORT: '18 Sep 2026',
 
   // Start time, e.g. '2:00 PM'. Empty until confirmed.
-  LAUNCH_TIME_LABEL: '',
+  LAUNCH_TIME_LABEL: '9:00 PM IST',
 
   // How long the session runs, as displayed. Launch Day is an opening
   // session plus one short guided activity — not a full-day build.
-  LAUNCH_DURATION_LABEL: '~2 hrs'
+  LAUNCH_DURATION_LABEL: '~2 hrs',
+
+  // Fully online. The joining link is emailed after registration — it is
+  // deliberately NOT published, so only registered pathway students get in.
+  LAUNCH_FORMAT: 'online'
 };

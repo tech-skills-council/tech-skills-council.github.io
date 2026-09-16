@@ -57,7 +57,7 @@
       <h2 id="next-head" style="font-size:clamp(26px,4vw,38px)">While you wait</h2>
     </div>
     <div class="grid-3" id="next-cells">
-      <div class="cell"><span class="num">01</span><h3>Check your inbox</h3><p>The council reviews submissions by hand and reaches out from <b style="color:var(--gold);font-weight:400">techskillscouncil@gmail.com</b> — check your spam folder if you don't hear back in a few days.</p></div>
+      <div class="cell"><span class="num">01</span><h3>Check your inbox</h3><p>The council reviews submissions by hand and reaches out from <b style="color:var(--gold);font-weight:400">techskillscouncil@gmail.com</b> — the joining link comes from there, so check your spam folder if you don't see it.</p></div>
       <div class="cell"><span class="num">02</span><h3>No need to resubmit</h3><p>One submission per email address is all that's needed. Submitting again won't move you up any list.</p></div>
       <div class="cell"><span class="num">03</span><h3>Bring someone along</h3><p>If a friend on the same pathway hasn't applied yet, this is the moment — the founding cohort is still forming.</p></div>
     </div>
@@ -149,12 +149,12 @@
       ledeEl.textContent = 'Your Launch Day registration is in' +
         (email ? ', ' + email : '') + '. ' +
         (when
-          ? 'Launch Day is ' + when + ' — your campus venue is confirmed by email closer to the date.'
+          ? 'Orientation is ' + when + (cfg.LAUNCH_TIME_LABEL ? ', ' + cfg.LAUNCH_TIME_LABEL : '') + '. It runs online — the joining link is emailed to you before the session.'
           : 'Date and venue go out by email as soon as they are confirmed.');
       tagEl.textContent = 'Registered';
       nextHead.textContent = when ? 'Before the day' : 'While you wait for the date';
       if (noteEl) {
-        noteEl.textContent = 'Roughly two hours. Nothing to prepare, nothing to install.';
+        noteEl.textContent = 'Online, roughly two hours. Nothing to prepare, nothing to install.';
       }
     }
   })();
