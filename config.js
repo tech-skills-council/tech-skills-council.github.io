@@ -32,5 +32,27 @@ window.TSC_CONFIG = {
 
   // Fully online. The joining link is emailed after registration — it is
   // deliberately NOT published, so only registered pathway students get in.
-  LAUNCH_FORMAT: 'online'
+  LAUNCH_FORMAT: 'online',
+
+  // ---- Google sign-in -------------------------------------------------
+  // THE KILL SWITCH. Set to false and the forms work exactly as they did
+  // before sign-in existed — no gate, no dependency on Google. If OAuth
+  // breaks an hour before the session, flip this, push, and registration
+  // keeps working. Nothing else needs to change.
+  REQUIRE_LOGIN: true,
+
+  // Supabase project URL and anon key. The anon key is publishable by
+  // design: RLS denies the anon role every table, the reporting views had
+  // their anon grants revoked, and the only write path is the edge
+  // function, which holds the service-role key server-side.
+  SUPABASE_URL: 'https://smvjvrwhbsvpnwdoastl.supabase.co',
+  SUPABASE_ANON_KEY: '',
+
+  // Addresses permitted to register, by domain. Arjun is supplying the
+  // authoritative list. An EMPTY list means any signed-in Google account
+  // is accepted — still a real improvement, because the address is then
+  // proven rather than typed. Add entries here and push; no redeploy.
+  // The edge function enforces the same list server-side via the
+  // ALLOWED_EMAIL_DOMAINS secret, which is the one that actually counts.
+  ALLOWED_EMAIL_DOMAINS: []
 };

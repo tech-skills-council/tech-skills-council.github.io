@@ -267,9 +267,18 @@
     var ctrl = new AbortController();
     var timer = setTimeout(function () { ctrl.abort(); }, 20000);
 
+    /* When the Google gate is on, send the access token. The edge function
+       verifies it and takes the email from the token rather than from this
+       payload, so a typed address can never stand in for a verified one. */
+    var headers = { 'Content-Type': 'application/json' };
+    var session = window.TSC_AUTH && window.TSC_AUTH.session;
+    if (session && session.access_token) {
+      headers.Authorization = 'Bearer ' + session.access_token;
+    }
+
     fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify(data),
       signal: ctrl.signal
     })
@@ -292,7 +301,18 @@
           say('bad', 'Too many submissions from your connection just now. Wait a minute and try again.');
           return;
         }
+        if (r.status === 401) {
+          say('bad', 'Your sign-in expired while you were filling this in. ' +
+                     'Reload the page, sign in again, and your answers will still be here.');
+          return;
+        }
         if (r.status === 403) {
+          if (r.body && r.body.error === 'email_not_allowed') {
+            say('bad', 'That Google account is not on the ASU Pathway list. ' +
+                       'Sign in with your university address, or email ' +
+                       (cfg.CONTACT_EMAIL || 'the council') + '.');
+            return;
+          }
           say('bad', 'Verification failed. Refresh the page and try once more.');
           return;
         }

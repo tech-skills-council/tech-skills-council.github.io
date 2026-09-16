@@ -553,3 +553,41 @@ legend{
     }
   }
 }
+
+/* ============================================================
+   Google sign-in gate (launch / council forms)
+   ============================================================ */
+.auth-gate{
+  border:1px solid var(--line);
+  border-left:3px solid var(--gold);
+  background:var(--surface);
+  padding:26px 26px 28px;
+  margin-bottom:30px;
+  display:flex;flex-direction:column;gap:12px;align-items:flex-start;
+  max-width:720px;
+}
+.auth-gate h3{font-size:21px;margin:0}
+.auth-gate p{color:var(--muted);font-size:15.5px;line-height:1.55;max-width:62ch;margin:0}
+.auth-gate p b{color:var(--text);font-weight:400}
+.auth-gate .btn{margin-top:6px}
+.auth-gate .btn svg{flex:0 0 auto}
+.auth-eyebrow{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted-dim);
+}
+.auth-eyebrow.ok{color:var(--gold)}
+.auth-eyebrow.bad{color:#FF8A8E}
+.auth-note{font-size:13px!important;color:var(--muted-dim)!important}
+
+/* A locked identity field should read as settled, not as broken. */
+.field input.is-locked{
+  background:var(--ground-2);
+  color:var(--muted);
+  cursor:default;
+}
+.field input.is-locked:focus{border-color:var(--line)}
+
+@media(max-width:520px){
+  .auth-gate{padding:22px 20px}
+  .auth-gate .btn{width:100%;justify-content:center}
+}

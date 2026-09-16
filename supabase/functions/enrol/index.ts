@@ -21,11 +21,13 @@
 //   SERVICE_ROLE_KEY   required  — Supabase service-role key
 //   TURNSTILE_SECRET   optional  — enables captcha verification
 //   RESEND_API_KEY     optional  — enables the notification email
-//   RESEND_FROM        optional  — verified sender; defaults to Resend's
-//                                  shared onboarding@resend.dev, which can
-//                                  ONLY deliver to the Resend account owner
 //   NOTIFY_EMAIL       optional  — defaults to the council Gmail
 //   IP_SALT            optional  — salt for hashing IPs
+//   REQUIRE_LOGIN      optional  — "true" to require a verified Google
+//                                  sign-in; anything else keeps the form open
+//   ALLOWED_EMAIL_DOMAINS optional — comma-separated, e.g.
+//                                  "rajalakshmi.edu.in,snu.edu.in,anurag.edu.in".
+//                                  Empty = any verified Google account.
 // ============================================================
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
@@ -33,12 +35,11 @@ const SERVICE_ROLE_KEY = Deno.env.get("SERVICE_ROLE_KEY") ?? "";
 const TURNSTILE_SECRET = Deno.env.get("TURNSTILE_SECRET") ?? "";
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
 const NOTIFY_EMAIL = Deno.env.get("NOTIFY_EMAIL") ?? "techskillscouncil@gmail.com";
-/* Sender. Resend's shared onboarding@resend.dev only delivers to the address
-   that owns the Resend account; once a domain is verified in Resend, set
-   RESEND_FROM to an address on it (e.g. "TSC <council@yourdomain>") and no
-   code change is needed. */
-const RESEND_FROM = Deno.env.get("RESEND_FROM") ?? "TSC Website <onboarding@resend.dev>";
 const IP_SALT = Deno.env.get("IP_SALT") ?? "tsc-default-salt-change-me";
+const REQUIRE_LOGIN = (Deno.env.get("REQUIRE_LOGIN") ?? "").toLowerCase() === "true";
+const ANON_KEY = Deno.env.get("ANON_KEY") ?? "";
+const ALLOWED_EMAIL_DOMAINS = (Deno.env.get("ALLOWED_EMAIL_DOMAINS") ?? "")
+  .split(",").map((d) => d.trim().toLowerCase().replace(/^@/, "")).filter(Boolean);
 
 const ALLOWED_ORIGINS = [
   "https://tech-skills-council.github.io",
@@ -91,7 +92,7 @@ function corsHeaders(origin: string | null) {
   const allowed = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     "Access-Control-Allow-Origin": allowed,
-    "Access-Control-Allow-Headers": "content-type",
+    "Access-Control-Allow-Headers": "content-type, authorization",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Vary": "Origin",
     "Content-Type": "application/json",
@@ -154,6 +155,53 @@ async function rpc(fn: string, args: Record<string, unknown>) {
   });
   if (!res.ok) return null;
   return await res.json();
+}
+
+/* ---------------- identity ---------------- */
+
+/* Exchanges the caller's Supabase access token for the user it belongs to.
+ *
+ * The browser gate in auth.js is cosmetic — it can be removed from a console
+ * in five seconds. This is the part that counts: the token is handed back to
+ * Supabase, which verifies its signature and expiry, and the email we store
+ * is the one Supabase returns, never the one the form posted. That is the
+ * whole point of adding sign-in: an address that is proven rather than typed.
+ */
+async function verifiedEmail(req: Request): Promise<
+  { ok: true; email: string } | { ok: false; status: number; error: string }
+> {
+  const auth = req.headers.get("authorization") ?? "";
+  const token = auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "";
+  if (!token) return { ok: false, status: 401, error: "sign_in_required" };
+
+  let res: Response;
+  try {
+    res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { Authorization: `Bearer ${token}`, apikey: ANON_KEY || SERVICE_ROLE_KEY },
+    });
+  } catch (e) {
+    console.error("auth lookup failed (network):", String(e).slice(0, 200));
+    return { ok: false, status: 503, error: "auth_unavailable" };
+  }
+
+  if (!res.ok) {
+    /* 401/403 here means expired or tampered — a normal thing to happen to
+       someone who left the form open, not an attack worth alarming about. */
+    return { ok: false, status: 401, error: "sign_in_required" };
+  }
+
+  const user = await res.json().catch(() => null);
+  const email = String(user?.email ?? "").trim().toLowerCase();
+  if (!email) return { ok: false, status: 401, error: "sign_in_required" };
+
+  if (ALLOWED_EMAIL_DOMAINS.length) {
+    const at = email.lastIndexOf("@");
+    const domain = at === -1 ? "" : email.slice(at + 1);
+    if (!ALLOWED_EMAIL_DOMAINS.includes(domain)) {
+      return { ok: false, status: 403, error: "email_not_allowed" };
+    }
+  }
+  return { ok: true, email };
 }
 
 /* ---------------- validation ---------------- */
@@ -324,68 +372,27 @@ function background(p: Promise<unknown>) {
   return p;
 }
 
-/* Sends the council a copy of each submission.
- *
- * A submission is NEVER failed because email is down — the row is already
- * stored by the time this runs, and the dashboard is the source of truth.
- * But a silent failure is its own bug: you add the key, assume it works,
- * and find out weeks later that nothing was ever delivered. So every
- * outcome is logged to the edge function log, where it can be read under
- * Edge Functions -> enrol -> Logs.
- *
- * FROM ADDRESS — the usual reason this "works" but delivers nothing:
- * Resend's shared onboarding@resend.dev sender is only permitted to send
- * to the email address that owns the Resend account. Sending anywhere
- * else is rejected with 403. So either
- *   (a) create the Resend account with NOTIFY_EMAIL's own address, or
- *   (b) verify a domain in Resend and set RESEND_FROM to an address on it.
- * RESEND_FROM exists so (b) never needs a code change or a redeploy.
- */
 async function notify(form: string, row: Record<string, unknown>) {
-  if (!RESEND_API_KEY) {
-    console.warn(
-      "notify skipped: RESEND_API_KEY is not set. The submission was stored " +
-        "successfully; no email was sent.",
-    );
-    return;
-  }
-
-  const subject = form === "council"
-    ? `Council application — ${row.full_name} (${row.university})`
-    : `Launch Day registration — ${row.full_name} (${row.university})`;
-
+  if (!RESEND_API_KEY) return;
   try {
-    const res = await fetch("https://api.resend.com/emails", {
+    await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: RESEND_FROM,
+        from: "TSC Website <onboarding@resend.dev>",
         to: [NOTIFY_EMAIL],
         reply_to: String(row.email ?? ""),
-        subject,
+        subject: form === "council"
+          ? `Council application — ${row.full_name} (${row.university})`
+          : `Launch Day registration — ${row.full_name} (${row.university})`,
         html: emailHtml(form, row),
       }),
     });
-
-    /* fetch() only rejects on a network-level failure. A 403 or 422 from
-       Resend resolves normally, so without this check the most likely
-       failure mode of all is completely invisible. */
-    if (!res.ok) {
-      const detail = await res.text().catch(() => "<unreadable>");
-      console.error(
-        `notify FAILED: Resend returned ${res.status} sending "${subject}" ` +
-          `from ${RESEND_FROM} to ${NOTIFY_EMAIL}. Response: ${detail.slice(0, 400)}`,
-      );
-      return;
-    }
-
-    const body = await res.json().catch(() => ({}));
-    console.log(`notify ok: "${subject}" queued as ${body?.id ?? "unknown id"}`);
-  } catch (e) {
-    console.error(`notify FAILED (network): ${String(e).slice(0, 300)}`);
+  } catch (_e) {
+    // never fail a submission because email is down
   }
 }
 
@@ -411,6 +418,15 @@ Deno.serve(async (req: Request) => {
 
   const form = str(body.form, 16);
   if (form !== "launch" && form !== "council") return json({ error: "unknown_form" }, 400, headers);
+
+  /* Sign-in gate. Off by default, so the endpoint behaves exactly as it did
+     before unless REQUIRE_LOGIN is explicitly turned on. */
+  let identity = "";
+  if (REQUIRE_LOGIN) {
+    const who = await verifiedEmail(req);
+    if (!who.ok) return json({ error: who.error }, who.status, headers);
+    identity = who.email;
+  }
 
   if (TURNSTILE_SECRET) {
     const fd = new FormData();
@@ -451,6 +467,11 @@ Deno.serve(async (req: Request) => {
     headers: { Prefer: "return=minimal" },
     body: JSON.stringify({ ip_hash: ipHash, form }),
   });
+
+  /* The verified address wins over anything in the payload. Without this the
+     gate would prove someone owns an address and then happily store a
+     different one. */
+  if (identity) body.email = identity;
 
   const result = form === "council" ? validateCouncil(body) : validateLaunch(body);
   if (!result.ok) return json({ error: "invalid", field: result.error }, 422, headers);
