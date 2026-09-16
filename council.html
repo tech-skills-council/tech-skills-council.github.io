@@ -54,7 +54,7 @@
       Seven working teams, plus board seats reserved for SNU and AU. This is the group that decides what the
       council actually does — not a membership form.
     </p>
-    <p class="hero-note">Applications close: to be announced · interviews run online · results announced on LinkedIn</p>
+    <p class="hero-note" id="council-note">Applications close: to be announced · interviews run online · results announced on LinkedIn</p>
   </div>
 </header>
 
@@ -66,6 +66,21 @@
       credentials second — no prior council experience is needed, and every branch and year is welcome.
       What we're looking for is people who will still be doing the work in week nine.
     </p>
+
+    <!-- Shown instead of the form while COUNCIL_APPLICATIONS_OPEN is false. -->
+    <div class="auth-gate" id="council-closed" hidden>
+      <span class="auth-eyebrow">Not open yet</span>
+      <h3>Council applications open after Orientation</h3>
+      <p>
+        We're filling the founding cohort first. Council and co-lead seats open once the club has launched
+        and we know who is actually turning up — which is the fairest way to pick the people who run it.
+      </p>
+      <p>
+        Come to Orientation in the meantime. That is where the co-lead seats get announced, and the people in
+        that room are the ones we'll be choosing from.
+      </p>
+      <a class="btn big" href="launch.html">Register for Orientation</a>
+    </div>
 
     <form id="council-form" data-tsc-form="council" novalidate>
 
@@ -335,6 +350,29 @@
 
 <script src="config.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+  /* Council applications are opened and closed from config.js. Doing it here
+     rather than by deleting the form means reopening is a one-line change and
+     the form cannot drift out of date while it is hidden. */
+  (function () {
+    var cfg = window.TSC_CONFIG || {};
+    if (cfg.COUNCIL_APPLICATIONS_OPEN) return;
+
+    var form = document.getElementById('council-form');
+    var closed = document.getElementById('council-closed');
+    if (closed) closed.hidden = false;
+    if (form) {
+      form.hidden = true;
+      /* A hidden required field can block submission and confuses screen
+         readers, so clear the attribute while the form is out of use. */
+      form.querySelectorAll('[required]').forEach(function (el) { el.required = false; });
+    }
+    var intro = document.querySelector('.form-intro');
+    if (intro) intro.hidden = true;
+    var note = document.getElementById('council-note');
+    if (note) note.textContent = 'Applications open after Orientation \u2014 date announced on the night.';
+  })();
+</script>
 <script src="assets/js/vendor/supabase-2.116.0.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/forms.js"></script>

@@ -54,5 +54,12 @@ window.TSC_CONFIG = {
   // proven rather than typed. Add entries here and push; no redeploy.
   // The edge function enforces the same list server-side via the
   // ALLOWED_EMAIL_DOMAINS secret, which is the one that actually counts.
-  ALLOWED_EMAIL_DOMAINS: []
+  ALLOWED_EMAIL_DOMAINS: [],
+
+  // ---- Council applications -------------------------------------------
+  // The board wants council applications closed until after Orientation,
+  // so the page shows a "opening soon" notice and points people at the
+  // orientation instead. Flip to true to reopen — the form is untouched
+  // underneath, nothing needs rebuilding.
+  COUNCIL_APPLICATIONS_OPEN: false
 };
