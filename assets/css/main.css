@@ -591,3 +591,26 @@ legend{
   .auth-gate{padding:22px 20px}
   .auth-gate .btn{width:100%;justify-content:center}
 }
+
+/* ============================================================
+   Legal pages (privacy, terms)
+   ============================================================ */
+.legal{max-width:74ch}
+.legal h2{font-size:clamp(22px,3.2vw,29px);margin:44px 0 14px}
+.legal h2:first-of-type{margin-top:0}
+.legal h3{font-size:17px;margin:26px 0 8px;text-transform:none;letter-spacing:-.01em}
+.legal p{color:var(--muted);font-size:16.5px;line-height:1.68;margin-bottom:15px}
+.legal p b,.legal li b{color:var(--text);font-weight:400}
+.legal ul{margin:0 0 18px;padding-left:20px;display:flex;flex-direction:column;gap:9px}
+.legal li{color:var(--muted);font-size:16.5px;line-height:1.6}
+.legal li::marker{color:var(--gold)}
+.legal a{text-decoration:underline;text-underline-offset:3px}
+.legal .updated{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted-dim);border-top:1px solid var(--line);padding-top:16px;margin-top:44px;
+}
+.legal .callout{
+  border-left:3px solid var(--gold);background:var(--surface);
+  padding:18px 20px;margin:0 0 24px;
+}
+.legal .callout p{margin:0;color:var(--text);font-size:16px}
