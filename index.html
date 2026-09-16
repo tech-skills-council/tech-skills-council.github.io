@@ -10,7 +10,7 @@
 <meta property="og:title" content="Tech &amp; Skills Council">
 <meta property="og:description" content="A cross-university technical council for students on the Cintana Alliance pathway to Arizona State University.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://tech-skills-council.github.io/assets/img/posters/tsc-launch-day-poster.png">
+<meta property="og:image" content="https://tech-skills-council.github.io/assets/img/posters/tsc-poster1.png">
 <meta property="og:url" content="https://tech-skills-council.github.io/index.html">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -177,7 +177,7 @@
           <p>
             The club's opening session, held online so that students at all three universities join the
             same room. It sets out what the club is and what it will run this year, and closes with a
-            live Q&amp;A with a chief guest currently studying at Arizona State.
+            live Q&amp;A with our chief guest.
           </p>
         </div>
 
@@ -200,7 +200,7 @@
             <div class="t">Block 03</div>
             <div class="c">
               <h4>Chief guest — live Q&amp;A</h4>
-              <p>A senior from our own batch, now studying at Arizona State, on the technical side of getting there: the skills that actually matter, how to prepare, and the questions nobody gives you a straight answer to.</p>
+              <p>An exclusive guest from ASU, with considerable tech experience, ready to take your questions.</p>
             </div>
           </div>
         </div>
@@ -454,21 +454,21 @@
 
     <div class="posters">
       <div class="poster reveal">
-        <a href="assets/img/posters/tsc-launch-day-poster.png" download>
-          <img src="assets/img/posters/tsc-launch-day-poster.png" alt="Orientation poster — online, Friday 18 September, 9:00 PM" width="2480" height="3508" loading="lazy" decoding="async">
+        <a href="assets/img/posters/tsc-poster1.png" download>
+          <img src="assets/img/posters/tsc-poster1.png" alt="Orientation poster — online, Friday 18 September, 9:00 PM" width="1055" height="1491" loading="lazy" decoding="async">
         </a>
         <div class="cap">
           <h4>Launch Day</h4>
-          <span><a href="assets/img/posters/tsc-launch-day-poster.png" download>Download A4 →</a></span>
+          <span><a href="assets/img/posters/tsc-poster1.png" download>Download A4 →</a></span>
         </div>
       </div>
       <div class="poster reveal">
-        <a href="assets/img/posters/tsc-council-poster.png" download>
-          <img src="assets/img/posters/tsc-council-poster.png" alt="Council invitation poster — apply for a council seat" width="1588" height="2246" loading="lazy" decoding="async">
+        <a href="assets/img/posters/tsc-poster2.png" download>
+          <img src="assets/img/posters/tsc-poster2.png" alt="Council invitation poster — apply for a council seat" width="1055" height="1491" loading="lazy" decoding="async">
         </a>
         <div class="cap">
           <h4>Council applications</h4>
-          <span><a href="assets/img/posters/tsc-council-poster.png" download>Download A4 →</a></span>
+          <span><a href="assets/img/posters/tsc-poster2.png" download>Download A4 →</a></span>
         </div>
       </div>
     </div>
@@ -550,7 +550,7 @@
     <div class="sec-head reveal">
       <span class="eyebrow">13 — Two ways in</span>
       <h2>Pick your door</h2>
-      <p>Both are open now. Doing both is normal — most council applicants come to Launch Day too.</p>
+      <p id="join-note">Launch Day is open now. Council applications open after Orientation — most council applicants come through Launch Day first.</p>
     </div>
 
     <div class="doors">
@@ -563,14 +563,14 @@
         </p>
         <a class="btn big" href="launch.html">Register →</a>
       </div>
-      <div class="door reveal">
+      <div class="door reveal" id="join-council-door">
         <span class="eyebrow">For prospective council members</span>
         <h3>Apply to the council</h3>
-        <p>
+        <p id="join-council-copy">
           Fifteen minutes. Seven working teams plus board seats for SNU and AU — the group that decides what the
           council actually does. No prior council experience is required; the written answers are read first.
         </p>
-        <a class="btn big ghost" href="council.html">Apply →</a>
+        <a class="btn big ghost" href="council.html" id="join-council-cta">Apply →</a>
       </div>
     </div>
   </div>
@@ -631,6 +631,22 @@
     var dur = document.getElementById('launch-duration');
     if (dur && cfg.LAUNCH_DURATION_LABEL) {
       dur.textContent = cfg.LAUNCH_DURATION_LABEL;
+    }
+
+    /* Council applications are opened and closed from config.js — see the
+       same flag in council.html. Reflect it here too, so "Pick your door"
+       doesn't invite people into a form that just shows a closed notice. */
+    if (!cfg.COUNCIL_APPLICATIONS_OPEN) {
+      var joinNote = document.getElementById('join-note');
+      if (joinNote) joinNote.textContent = 'Launch Day is open now. Council applications open after Orientation.';
+
+      var councilCopy = document.getElementById('join-council-copy');
+      if (councilCopy) councilCopy.textContent =
+        'Not open yet. Seven working teams plus board seats for SNU and AU — the group that decides what the ' +
+        'council actually does. Seats open once the founding cohort has launched; come to Launch Day first.';
+
+      var councilCta = document.getElementById('join-council-cta');
+      if (councilCta) councilCta.textContent = 'Learn more →';
     }
   })();
 </script>

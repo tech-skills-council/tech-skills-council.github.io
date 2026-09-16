@@ -330,35 +330,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:30px;justify-content:space-between}
 .form-status.bad{border-color:#E5484D;color:#FFC9CB}
 
 /* ============================================================
-   Custom cursor — pointer devices only
-   ============================================================ */
-@media (hover: hover) and (pointer: fine){
-  html.js body{cursor:none}
-  html.js a,html.js button,html.js summary,html.js input,html.js select,html.js textarea,html.js label{cursor:none}
-
-  #cursor-dot,#cursor-ring{
-    position:fixed;top:0;left:0;z-index:200;pointer-events:none;
-    transform:translate3d(-100px,-100px,0);will-change:transform;
-  }
-  #cursor-dot{
-    width:7px;height:7px;margin:-3.5px 0 0 -3.5px;background:var(--gold);border-radius:50%;
-  }
-  #cursor-ring{
-    width:34px;height:34px;margin:-17px 0 0 -17px;border:1.5px solid rgba(255,198,39,.55);border-radius:50%;
-    transition:width .22s ease,height .22s ease,margin .22s ease,border-color .22s ease,background .22s ease;
-  }
-  #cursor-ring.hot{
-    width:56px;height:56px;margin:-28px 0 0 -28px;
-    border-color:var(--gold);background:rgba(255,198,39,.12);
-  }
-  #cursor-ring.press{width:26px;height:26px;margin:-13px 0 0 -13px}
-}
-@media (prefers-reduced-motion:reduce){
-  html.js body,html.js a,html.js button{cursor:auto}
-  #cursor-dot,#cursor-ring{display:none}
-}
-
-/* ============================================================
    Added sections
    ============================================================ */
 
