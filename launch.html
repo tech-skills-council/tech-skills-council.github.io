@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com; form-action 'self' https://accounts.google.com https://*.supabase.co">
 <title>Register — Tech &amp; Skills Council</title>
-<meta name="description" content="Become a member of the Tech &amp; Skills Council — registration takes two minutes online. Open to ASU Pathway students at REC, Shiv Nadar and Anurag. Orientation, the club's opening session, follows on Friday 18 September, 9:00 PM IST.">
+<meta name="description" content="Become a member of the Tech &amp; Skills Council — registration takes two minutes online. Open to pathway students at Rajalakshmi Engineering College, Shiv Nadar University, Anurag University and Chitkara University. Orientation, the club's opening session, has moved to next week — date to be announced.">
 <meta name="theme-color" content="#8C1D40">
 <meta property="og:title" content="Register — Tech &amp; Skills Council">
-<meta property="og:description" content="Become a member of the Tech &amp; Skills Council. Orientation, the opening session, runs online Friday 18 September 2026, 9:00 PM IST.">
+<meta property="og:description" content="Become a member of the Tech &amp; Skills Council. Orientation, the opening session, has moved to next week — date to be announced.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://tech-skills-council.github.io/assets/img/posters/tsc-poster1.png">
 <meta property="og:url" content="https://tech-skills-council.github.io/launch.html">
@@ -45,27 +45,37 @@
 <header class="hero" style="padding:64px 0 44px">
   <div class="wrap">
     <div class="hero-tag">
-      <span class="tag solid">Powered by ASU · Cintana Alliance</span>
+      <span class="tag solid">A cross-university technical council</span>
       <span class="tag gold">Membership</span>
-      <span class="tag">REC · SNU · AU</span>
+      <span class="tag">Rajalakshmi Engineering College · Shiv Nadar University · Anurag University · Chitkara University</span>
     </div>
     <h1 class="hero-title" style="font-size:clamp(42px,8vw,88px)">Register</h1>
     <p class="hero-lede">
       Two minutes to register as a member of the Tech &amp; Skills Council. Your first event is Orientation
-      — the club's opening session, held online so students from all three universities are in the same
-      room: what the club is, what it runs this year, and a live Q&amp;A with our chief guest from ASU.
+      — the club's opening session, held virtually so students from all four universities are in the same
+      room: what the club is, what it runs this year, and a live Q&amp;A with our chief guest.
       Nothing to prepare, nothing to install.
     </p>
-    <p class="hero-note" id="date-note">Online. The joining link is emailed to you after you register.</p>
+    <p class="hero-note" id="date-note">Orientation has moved to next week — date and time to be announced. The joining link is emailed to you after you register.</p>
   </div>
 </header>
 
 <main>
 <section>
   <div class="wrap form-wrap">
+    <div class="auth-gate" style="margin-bottom:26px">
+      <span class="auth-eyebrow">Schedule update</span>
+      <h3>Orientation has moved to next week</h3>
+      <p>
+        With exams running across campuses this week, we're pushing Orientation back to give everyone room to
+        focus. The exact date and time will be announced shortly by email — but registration is open now, and
+        you can become a member today; nothing about that changes.
+      </p>
+    </div>
+
     <p class="form-intro">
-      Open to every student on an active Cintana Alliance / ASU pathway at REC, Shiv Nadar University or
-      Anurag University — every branch, every year, <strong style="color:var(--gold);font-weight:400">no coding
+      Open to every student on an active pathway at Rajalakshmi Engineering College, Shiv Nadar University,
+      Anurag University or Chitkara University — every branch, every year, <strong style="color:var(--gold);font-weight:400">no coding
       experience assumed</strong>. Registering also puts you on the list for Coding Foundations cohort one.
     </p>
 
@@ -81,19 +91,26 @@
         </div>
 
         <div class="field">
-          <label for="email">Email <span class="req">*</span></label>
+          <label for="email">University email <span class="req">*</span></label>
           <input id="email" name="email" type="email" autocomplete="email" required>
-          <span class="hint">Use your <b style="color:var(--gold);font-weight:400">university email</b> if you have one — it is how we confirm you are on the ASU pathway. The joining link goes to this address.</span>
-          <span class="err">Enter a valid email address.</span>
+          <span class="hint">Your <b style="color:var(--gold);font-weight:400">university email address is required</b> — it is how we confirm you're a student at a partner university. The joining link goes to this address.</span>
+          <span class="err">Enter your university email address, not a personal account.</span>
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone number <span class="req">*</span></label>
+          <input id="phone" name="phone" type="tel" maxlength="24" autocomplete="tel" required>
+          <span class="err">Enter a valid phone number.</span>
         </div>
 
         <div class="field">
           <label for="university">University <span class="req">*</span></label>
           <select id="university" name="university" required>
             <option value="">Select your university</option>
-            <option value="REC">Rajalakshmi Engineering College (REC)</option>
-            <option value="SNU">Shiv Nadar University (SNU)</option>
-            <option value="AU">Anurag University (AU)</option>
+            <option value="REC">Rajalakshmi Engineering College</option>
+            <option value="SNU">Shiv Nadar University</option>
+            <option value="AU">Anurag University</option>
+            <option value="CU">Chitkara University</option>
           </select>
           <span class="err">Select your university.</span>
         </div>
@@ -118,13 +135,13 @@
         </div>
 
         <div class="field">
-          <label for="on_asu_pathway">Are you on the ASU / Cintana Alliance pathway? <span class="req">*</span></label>
+          <label for="on_asu_pathway">Are you on an active university pathway programme? <span class="req">*</span></label>
           <select id="on_asu_pathway" name="on_asu_pathway" required>
             <option value="">Select one</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
           </select>
-          <span class="err">Let us know whether you're on the ASU / Cintana pathway.</span>
+          <span class="err">Let us know whether you're on the pathway programme.</span>
         </div>
       </fieldset>
 
@@ -212,8 +229,8 @@
       <a href="terms.html">Terms of use</a>
     </div>
     <p class="f-legal">
-      Tech &amp; Skills Council — an official programme of the ASU Cintana Alliance, in partnership with Arizona State
-      University. © <span id="year">2026</span> Tech &amp; Skills Council.
+      Tech &amp; Skills Council — an independent, cross-university technical council.
+      © <span id="year">2026</span> Tech &amp; Skills Council.
     </p>
   </div>
 </footer>

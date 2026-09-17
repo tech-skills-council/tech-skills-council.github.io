@@ -20,7 +20,13 @@ create table if not exists public.launch_registrations (
 
   full_name         text not null check (char_length(trim(full_name)) between 2 and 120),
   email             text not null check (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
-  university        text not null check (university in ('REC','SNU','AU')),
+  phone             text     check (
+                      phone is null or (
+                        char_length(phone) <= 24
+                        and char_length(regexp_replace(phone, '\D', '', 'g')) >= 7
+                      )
+                    ),
+  university        text not null check (university in ('REC','SNU','AU','CU')),
   year_of_study     text not null check (year_of_study in ('1','2','3','4','other')),
   branch            text not null check (char_length(trim(branch)) between 2 and 120),
 
@@ -51,7 +57,7 @@ create table if not exists public.council_applications (
   full_name             text not null check (char_length(trim(full_name)) between 2 and 120),
   email                 text not null check (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
   phone                 text     check (phone is null or char_length(phone) <= 24),
-  university            text not null check (university in ('REC','SNU','AU')),
+  university            text not null check (university in ('REC','SNU','AU','CU')),
   year_of_study         text not null check (year_of_study in ('1','2','3','4','other')),
   branch                text not null check (char_length(trim(branch)) between 2 and 120),
 
@@ -256,3 +262,51 @@ alter table public.council_applications
 alter table public.council_applications
   add constraint council_applications_team_second_check
   check (team_second is null or team_second in ('tech','marketing','operations','none')) not valid;
+
+-- ------------------------------------------------------------
+-- 9. Chitkara University added as a fourth partner — 17 September 2026
+--
+-- Same NOT VALID approach as above: widens the university constraint on
+-- both tables without re-checking rows already stored, so it cannot fail
+-- on existing registrations or applications. Safe to re-run.
+-- ------------------------------------------------------------
+
+alter table public.launch_registrations
+  drop constraint if exists launch_registrations_university_check;
+alter table public.launch_registrations
+  add constraint launch_registrations_university_check
+  check (university in ('REC','SNU','AU','CU')) not valid;
+
+alter table public.council_applications
+  drop constraint if exists council_applications_university_check;
+alter table public.council_applications
+  add constraint council_applications_university_check
+  check (university in ('REC','SNU','AU','CU')) not valid;
+
+-- ------------------------------------------------------------
+-- 10. Phone number added to Launch Day registrations — 17 September 2026
+--
+-- Added nullable, with a check that only applies when a value is present,
+-- so this cannot fail against rows already in the table — those predate
+-- this field and correctly stay null. The edge function is the actual
+-- enforcement point (required, re-validated server-side on every
+-- submission); this constraint is defense in depth, so it validates the
+-- same way: strip everything but digits and count them, rather than
+-- raw character length, since a real number may contain +, spaces,
+-- parentheses and hyphens. 24 characters remains a plain input/storage
+-- cap on the raw string. Safe to re-run.
+-- ------------------------------------------------------------
+
+alter table public.launch_registrations
+  add column if not exists phone text;
+
+alter table public.launch_registrations
+  drop constraint if exists launch_registrations_phone_check;
+alter table public.launch_registrations
+  add constraint launch_registrations_phone_check
+  check (
+    phone is null or (
+      char_length(phone) <= 24
+      and char_length(regexp_replace(phone, '\D', '', 'g')) >= 7
+    )
+  ) not valid;

@@ -1,6 +1,6 @@
 /* Google sign-in gate for the registration and application forms.
    ---------------------------------------------------------------
-   Why this exists: the club is open to ASU Pathway students only, and a
+   Why this exists: the club is open to pathway students only, and a
    typed-in email address proves nothing — anyone can type a classmate's.
    Signing in with Google proves the person actually controls the address,
    and the address itself is then taken from a token the browser cannot
@@ -70,7 +70,7 @@
       panel.innerHTML =
         '<span class="auth-eyebrow">Members only</span>' +
         '<h3>Sign in to register</h3>' +
-        '<p>Orientation is open to ASU Pathway students for now. Sign in with your ' +
+        '<p>Orientation is open to pathway students for now. Sign in with your ' +
         'university Google account and the form below unlocks.' +
         (DOMAINS.length
           ? ' Accepted addresses end in <b>' + domainList() + '</b>.'
@@ -94,7 +94,7 @@
       panel.innerHTML =
         '<span class="auth-eyebrow bad">Not a pathway address</span>' +
         '<h3>That account can\'t register yet</h3>' +
-        '<p>You signed in as <b>' + esc(detail) + '</b>, which isn\'t an ASU Pathway address. ' +
+        '<p>You signed in as <b>' + esc(detail) + '</b>, which isn\'t a recognised pathway address. ' +
         (DOMAINS.length ? 'Please use the account ending in <b>' + domainList() + '</b>. ' : '') +
         'If you are on the pathway and this looks wrong, email ' +
         '<a href="mailto:' + esc(cfg.CONTACT_EMAIL || '') + '">' + esc(cfg.CONTACT_EMAIL || 'the council') + '</a> ' +

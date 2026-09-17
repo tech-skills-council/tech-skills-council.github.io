@@ -1,8 +1,8 @@
 # Tech & Skills Council — website
 
 Public site and the two front doors (Launch Day registration, council applications) for the
-Tech & Skills Council, an official programme of the ASU Cintana Alliance spanning REC,
-Shiv Nadar University and Anurag University.
+Tech & Skills Council, an independent, cross-university technical council spanning Rajalakshmi
+Engineering College, Shiv Nadar University, Anurag University and Chitkara University.
 
 **Learn by Building.** — live at https://tech-skills-council.github.io/
 
@@ -76,7 +76,7 @@ submissions save, you just don't get the email.
 
 ### 3. Fill in the rest of `config.js`
 
-`LAUNCH_DATE_LABEL` / `LAUNCH_TIME_LABEL` once the Cintana Alliance approval clears.
+`LAUNCH_DATE_LABEL` / `LAUNCH_TIME_LABEL` once the date is confirmed.
 Leave them empty and the site says "to be announced" everywhere, including on both posters.
 
 ## Load and abuse handling
@@ -132,9 +132,9 @@ python3 -m http.server 8000
 
 ## Brand
 
-`:root` at the top of `assets/css/main.css`. ASU Maroon `#8C1D40`, ASU Gold `#FFC627`,
-black, white — roughly 80% of any surface. Display: Archivo (standing in for ASU's
-Neue Haas Grotesk); body: the Arial/Helvetica stack ASU specifies for web.
+`:root` at the top of `assets/css/main.css`. Deep maroon `#8C1D40`, gold `#FFC627`,
+black, white — roughly 80% of any surface. Display: Archivo; body: the Arial/Helvetica
+web-safe stack.
 
 ## Motion & accessibility
 

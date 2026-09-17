@@ -1,8 +1,8 @@
 /* ============================================================
    Tech & Skills Council — site styles
-   Palette: ASU maroon #8C1D40 · ASU gold #FFC627 · black · white
-   Type: Archivo (display, stands in for Neue Haas Grotesk)
-         Arial/Helvetica stack (body — ASU's own webfont stack)
+   Palette: deep maroon #8C1D40 · gold #FFC627 · black · white
+   Type: Archivo (display)
+         Arial/Helvetica stack (body)
    ============================================================ */
 
 :root{
@@ -464,7 +464,7 @@ legend{
    The mono label styles bottomed out at 10.5–11px. Uppercase mono at
    that size is the first thing to become unreadable on a phone held at
    arm's length, and these carry real information (the date note, the
-   ASU attribution, section eyebrows). */
+   hero tags, section eyebrows). */
 @media (max-width:520px){
   .hero-kicker{font-size:12px;letter-spacing:.16em}
   .eyebrow    {font-size:12px;letter-spacing:.16em}

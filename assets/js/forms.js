@@ -71,7 +71,7 @@
     leadership_history: 'your leadership history',
     portfolio_url: 'your portfolio link',
     linkedin_url: 'your LinkedIn link',
-    on_asu_pathway: 'whether you are on the ASU / Cintana pathway',
+    on_asu_pathway: 'whether you are on an active pathway programme',
     consent: 'the consent box'
   };
 
@@ -108,6 +108,7 @@
       form: 'launch',
       full_name: val(fd, 'full_name', 120),
       email: val(fd, 'email', 160).toLowerCase(),
+      phone: val(fd, 'phone', 24),
       university: val(fd, 'university', 8),
       year_of_study: val(fd, 'year_of_study', 8),
       branch: val(fd, 'branch', 120),
@@ -153,7 +154,7 @@
   }
 
   var REQUIRED = {
-    launch: ['full_name', 'email', 'university', 'year_of_study', 'branch', 'on_asu_pathway'],
+    launch: ['full_name', 'email', 'phone', 'university', 'year_of_study', 'branch', 'on_asu_pathway'],
     council: ['full_name', 'email', 'university', 'year_of_study', 'branch',
               'role_type', 'team_first', 'hours_per_week', 'why_join', 'relevant_experience',
               'on_asu_pathway']
@@ -164,7 +165,7 @@
      are shorter than any sensible minimum, and a length rule silently rejects
      them. Free-text fields keep a minimum length; fixed-choice fields do not. */
   var ENUMS = {
-    university:       ['REC', 'SNU', 'AU'],
+    university:       ['REC', 'SNU', 'AU', 'CU'],
     year_of_study:    ['1', '2', '3', '4', 'other'],
     experience:       ['none', 'some', 'comfortable'],
     experience_level: ['none', 'some', 'comfortable', 'advanced'],
@@ -177,12 +178,24 @@
 
   var MIN_LENGTH = { why_join: 80, relevant_experience: 60, what_you_would_build: 0 };
 
+  /* Personal/free email providers are not university addresses. Blocking
+     these (rather than allow-listing exact university domains, which we
+     would have to keep in sync by hand as campuses change theirs) is what
+     actually enforces "university email required" today. */
+  var PERSONAL_EMAIL_DOMAINS = [
+    'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.co.in', 'outlook.com',
+    'hotmail.com', 'live.com', 'msn.com', 'icloud.com', 'me.com', 'aol.com',
+    'protonmail.com', 'proton.me', 'rediffmail.com', 'yopmail.com'
+  ];
+
   function problems(data) {
     var bad = [];
     REQUIRED[kind].forEach(function (n) {
       var v = data[n];
       if (ENUMS[n]) {
         if (ENUMS[n].indexOf(String(v)) === -1) bad.push(n);
+      } else if (n === 'phone') {
+        if (String(v || '').replace(/\D/g, '').length < 7) bad.push(n);
       } else if (!v || String(v).trim().length < 2) {
         bad.push(n);
       }
@@ -193,7 +206,9 @@
       var v = data[n];
       if (v && ENUMS[n].indexOf(String(v)) === -1 && bad.indexOf(n) === -1) bad.push(n);
     });
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || '')) {
+    var emailDomain = String(data.email || '').split('@')[1] || '';
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || '') ||
+        PERSONAL_EMAIL_DOMAINS.indexOf(emailDomain.toLowerCase()) !== -1) {
       if (bad.indexOf('email') === -1) bad.push('email');
     }
     Object.keys(MIN_LENGTH).forEach(function (n) {
@@ -306,7 +321,7 @@
         }
         if (r.status === 403) {
           if (r.body && r.body.error === 'email_not_allowed') {
-            say('bad', 'That Google account is not on the ASU Pathway list. ' +
+            say('bad', 'That Google account is not on the approved pathway list. ' +
                        'Sign in with your university address, or email ' +
                        (cfg.CONTACT_EMAIL || 'the council') + '.');
             return;

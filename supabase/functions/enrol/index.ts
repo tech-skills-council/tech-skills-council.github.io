@@ -57,7 +57,7 @@ const ALLOWED_HOSTNAMES = [
 const RATE_WINDOW_MINUTES = 10;
 /* Campus networks put hundreds of students behind a single public IP, and a
    poster or a live announcement can send a whole lecture hall to the form at
-   once — Launch Day itself is exactly that scenario across three campuses.
+   once — Launch Day itself is exactly that scenario across four campuses.
    A limit tuned for one person per address (5) would reject most of a
    computer lab or hostel block within minutes. Turnstile is the real bot
    gate; this only has to stop a scripted flood, so it is set well above any
@@ -65,7 +65,7 @@ const RATE_WINDOW_MINUTES = 10;
 const RATE_MAX_PER_WINDOW = 150;
 const MAX_BODY_BYTES = 16000;
 
-const UNIVERSITIES = ["REC", "SNU", "AU"];
+const UNIVERSITIES = ["REC", "SNU", "AU", "CU"];
 const YEARS = ["1", "2", "3", "4", "other"];
 const TEAMS = ["tech", "marketing", "operations"];
 const ROLE_TYPES = ["lead", "associate", "either", "board"];
@@ -99,6 +99,21 @@ function json(body: unknown, status: number, headers: Record<string, string>) {
 const str = (v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
 const oneOf = (v: string, list: string[]) => (list.includes(v) ? v : "");
 const nullIfEmpty = (v: string) => (v.length ? v : null);
+
+/* Personal/free email providers are not university addresses. Blocking these
+   (rather than allow-listing exact university domains, which would have to
+   be kept in sync by hand as campuses change theirs) is what actually
+   enforces "university email required" today — mirrors assets/js/forms.js. */
+const PERSONAL_EMAIL_DOMAINS = [
+  "gmail.com", "googlemail.com", "yahoo.com", "yahoo.co.in", "outlook.com",
+  "hotmail.com", "live.com", "msn.com", "icloud.com", "me.com", "aol.com",
+  "protonmail.com", "proton.me", "rediffmail.com", "yopmail.com",
+];
+const isPersonalEmail = (email: string): boolean => {
+  const at = email.lastIndexOf("@");
+  const domain = at === -1 ? "" : email.slice(at + 1);
+  return PERSONAL_EMAIL_DOMAINS.includes(domain);
+};
 
 /* The client's own X-Forwarded-For entry is whatever it chooses to send —
    trusting the FIRST entry lets anyone defeat the rate limit by sending a
@@ -207,6 +222,7 @@ function validateLaunch(b: Record<string, unknown>): Result {
   const row = {
     full_name: str(b.full_name, 120),
     email: str(b.email, 160).toLowerCase(),
+    phone: str(b.phone, 24),
     university: oneOf(str(b.university, 8), UNIVERSITIES),
     year_of_study: oneOf(str(b.year_of_study, 8), YEARS),
     branch: str(b.branch, 120),
@@ -219,7 +235,10 @@ function validateLaunch(b: Record<string, unknown>): Result {
     status: "registered",
   };
   if (row.full_name.length < 2) return { ok: false, error: "full_name" };
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email)) return { ok: false, error: "email" };
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email) || isPersonalEmail(row.email)) {
+    return { ok: false, error: "email" };
+  }
+  if (row.phone.replace(/\D/g, "").length < 7) return { ok: false, error: "phone" };
   if (!row.university) return { ok: false, error: "university" };
   if (!row.year_of_study) return { ok: false, error: "year_of_study" };
   if (row.branch.length < 2) return { ok: false, error: "branch" };
@@ -260,7 +279,9 @@ function validateCouncil(b: Record<string, unknown>): Result {
   };
 
   if (row.full_name.length < 2) return { ok: false, error: "full_name" };
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email)) return { ok: false, error: "email" };
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email) || isPersonalEmail(row.email)) {
+    return { ok: false, error: "email" };
+  }
   if (!row.university) return { ok: false, error: "university" };
   if (!row.year_of_study) return { ok: false, error: "year_of_study" };
   if (row.branch.length < 2) return { ok: false, error: "branch" };
@@ -302,11 +323,12 @@ function emailHtml(form: string, row: Record<string, unknown>) {
       ["Portfolio", row.portfolio_url],
       ["LinkedIn", row.linkedin_url],
       ["Coming to Launch Day", row.attending_launch ? "Yes" : "No"],
-      ["On the ASU / Cintana pathway", row.on_asu_pathway],
+      ["On the pathway programme", row.on_asu_pathway],
     ]
     : [
       ["Name", row.full_name],
       ["Email", row.email],
+      ["Phone", row.phone],
       ["University", row.university],
       ["Year", row.year_of_study],
       ["Branch", row.branch],
@@ -315,7 +337,7 @@ function emailHtml(form: string, row: Record<string, unknown>) {
       ["Dietary needs", row.dietary],
       ["Heard about us via", row.hear_about],
       ["Wants to build", row.interests],
-      ["On the ASU / Cintana pathway", row.on_asu_pathway],
+      ["On the pathway programme", row.on_asu_pathway],
     ];
 
   const table = rows.map(([k, v]) =>
