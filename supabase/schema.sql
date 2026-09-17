@@ -57,12 +57,9 @@ create table if not exists public.council_applications (
 
   -- what they are applying for
   role_type             text not null check (role_type in ('lead','associate','either','board')),
-  team_first            text not null check (team_first in
-                          ('skill_tracks','build_nights','design_creative','platform_infra',
-                           'certification_asu','industry_alumni','pr_outreach')),
+  team_first            text not null check (team_first in ('tech','marketing','operations')),
   team_second           text     check (team_second is null or team_second in
-                          ('skill_tracks','build_nights','design_creative','platform_infra',
-                           'certification_asu','industry_alumni','pr_outreach','none')),
+                          ('tech','marketing','operations','none')),
 
   experience_level      text     check (experience_level in ('none','some','comfortable','advanced')),
   hours_per_week        text not null check (hours_per_week in ('1-3','4-6','7-10','10+')),
@@ -234,3 +231,28 @@ revoke all on public.council_pipeline from anon, authenticated, public;
 -- table policies still apply even if a grant is ever re-added.
 alter view public.launch_counts    set (security_invoker = on);
 alter view public.council_pipeline set (security_invoker = on);
+
+-- ------------------------------------------------------------
+-- 8. Council restructured to three working teams — 17 September 2026
+--
+-- The council launched with three working teams (Tech, Marketing,
+-- Operations) rather than the originally planned seven. More teams will
+-- be added as the council grows, at which point this constraint gets
+-- widened again the same way.
+--
+-- NOT VALID skips checking rows already in the table, so this cannot fail
+-- on any application submitted under the old seven-team list — it only
+-- enforces the new list going forward. Safe to re-run.
+-- ------------------------------------------------------------
+
+alter table public.council_applications
+  drop constraint if exists council_applications_team_first_check;
+alter table public.council_applications
+  add constraint council_applications_team_first_check
+  check (team_first in ('tech','marketing','operations')) not valid;
+
+alter table public.council_applications
+  drop constraint if exists council_applications_team_second_check;
+alter table public.council_applications
+  add constraint council_applications_team_second_check
+  check (team_second is null or team_second in ('tech','marketing','operations','none')) not valid;

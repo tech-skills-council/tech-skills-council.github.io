@@ -170,10 +170,8 @@
     experience_level: ['none', 'some', 'comfortable', 'advanced'],
     role_type:        ['lead', 'associate', 'either', 'board'],
     hours_per_week:   ['1-3', '4-6', '7-10', '10+'],
-    team_first:       ['skill_tracks', 'build_nights', 'design_creative', 'platform_infra',
-                       'certification_asu', 'industry_alumni', 'pr_outreach'],
-    team_second:      ['skill_tracks', 'build_nights', 'design_creative', 'platform_infra',
-                       'certification_asu', 'industry_alumni', 'pr_outreach', 'none'],
+    team_first:       ['tech', 'marketing', 'operations'],
+    team_second:      ['tech', 'marketing', 'operations', 'none'],
     on_asu_pathway:   ['yes', 'no']
   };
 

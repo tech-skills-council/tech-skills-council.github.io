@@ -67,22 +67,15 @@ const MAX_BODY_BYTES = 16000;
 
 const UNIVERSITIES = ["REC", "SNU", "AU"];
 const YEARS = ["1", "2", "3", "4", "other"];
-const TEAMS = [
-  "skill_tracks", "build_nights", "design_creative", "platform_infra",
-  "certification_asu", "industry_alumni", "pr_outreach",
-];
+const TEAMS = ["tech", "marketing", "operations"];
 const ROLE_TYPES = ["lead", "associate", "either", "board"];
 const HOURS = ["1-3", "4-6", "7-10", "10+"];
 const YES_NO = ["yes", "no"];
 
 const TEAM_LABELS: Record<string, string> = {
-  skill_tracks: "Skill Tracks",
-  build_nights: "Hackathons & Build Nights",
-  design_creative: "Design & Creative",
-  platform_infra: "Platform & Infrastructure",
-  certification_asu: "Certification & ASU Liaison",
-  industry_alumni: "Industry & Alumni Relations",
-  pr_outreach: "PR & Outreach",
+  tech: "Tech",
+  marketing: "Marketing",
+  operations: "Operations",
   none: "—",
 };
 
