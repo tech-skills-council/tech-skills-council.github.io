@@ -178,14 +178,11 @@
 
   var MIN_LENGTH = { why_join: 80, relevant_experience: 60, what_you_would_build: 0 };
 
-  /* Personal/free email providers are not university addresses. Blocking
-     these (rather than allow-listing exact university domains, which we
-     would have to keep in sync by hand as campuses change theirs) is what
-     actually enforces "university email required" today. */
-  var PERSONAL_EMAIL_DOMAINS = [
-    'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.co.in', 'outlook.com',
-    'hotmail.com', 'live.com', 'msn.com', 'icloud.com', 'me.com', 'aol.com',
-    'protonmail.com', 'proton.me', 'rediffmail.com', 'yopmail.com'
+  /* Only these four partner-university domains may register. Mirrors the
+     edge function exactly — that copy is the one that actually counts,
+     since this client-side check only saves a round trip. */
+  var ALLOWED_EMAIL_DOMAINS = [
+    'rajalakshmi.edu.in', 'snu.edu.in', 'anurag.edu.in', 'chitkara.edu.in'
   ];
 
   function problems(data) {
@@ -208,7 +205,7 @@
     });
     var emailDomain = String(data.email || '').split('@')[1] || '';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || '') ||
-        PERSONAL_EMAIL_DOMAINS.indexOf(emailDomain.toLowerCase()) !== -1) {
+        ALLOWED_EMAIL_DOMAINS.indexOf(emailDomain.toLowerCase()) === -1) {
       if (bad.indexOf('email') === -1) bad.push('email');
     }
     Object.keys(MIN_LENGTH).forEach(function (n) {
@@ -248,7 +245,9 @@
     if (bad.length) {
       markBad(bad);
       var shortAnswers = bad.filter(function (n) { return MIN_LENGTH[n] > 0; });
-      if (shortAnswers.length === bad.length) {
+      if (bad.length === 1 && bad[0] === 'email') {
+        say('bad', 'Please use your university email ID to register.');
+      } else if (shortAnswers.length === bad.length) {
         say('bad', 'Please expand ' + listOf(shortAnswers) +
                    ' — a few sentences gives the reading panel something to assess.');
       } else {

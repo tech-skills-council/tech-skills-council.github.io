@@ -25,9 +25,16 @@
 //   IP_SALT            optional  — salt for hashing IPs
 //   REQUIRE_LOGIN      optional  — "true" to require a verified Google
 //                                  sign-in; anything else keeps the form open
-//   ALLOWED_EMAIL_DOMAINS optional — comma-separated, e.g.
-//                                  "rajalakshmi.edu.in,snu.edu.in,anurag.edu.in".
+//   ALLOWED_EMAIL_DOMAINS optional — only used if REQUIRE_LOGIN is on;
+//                                  comma-separated, e.g.
+//                                  "rajalakshmi.edu.in,snu.edu.in,anurag.edu.in,chitkara.edu.in".
 //                                  Empty = any verified Google account.
+//
+// Separately, and always on regardless of REQUIRE_LOGIN: every submitted
+// email — typed or Google-verified — must end in one of
+// UNIVERSITY_EMAIL_DOMAINS below. That hardcoded list, not this secret, is
+// what actually restricts registration to the four partner universities
+// today.
 // ============================================================
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
@@ -100,19 +107,16 @@ const str = (v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
 const oneOf = (v: string, list: string[]) => (list.includes(v) ? v : "");
 const nullIfEmpty = (v: string) => (v.length ? v : null);
 
-/* Personal/free email providers are not university addresses. Blocking these
-   (rather than allow-listing exact university domains, which would have to
-   be kept in sync by hand as campuses change theirs) is what actually
-   enforces "university email required" today — mirrors assets/js/forms.js. */
-const PERSONAL_EMAIL_DOMAINS = [
-  "gmail.com", "googlemail.com", "yahoo.com", "yahoo.co.in", "outlook.com",
-  "hotmail.com", "live.com", "msn.com", "icloud.com", "me.com", "aol.com",
-  "protonmail.com", "proton.me", "rediffmail.com", "yopmail.com",
+/* Only these four partner-university domains may register or apply. This is
+   the copy that actually counts — the client-side check in forms.js only
+   saves a round trip and must be kept in sync with this list by hand. */
+const UNIVERSITY_EMAIL_DOMAINS = [
+  "rajalakshmi.edu.in", "snu.edu.in", "anurag.edu.in", "chitkara.edu.in",
 ];
-const isPersonalEmail = (email: string): boolean => {
+const isUniversityEmail = (email: string): boolean => {
   const at = email.lastIndexOf("@");
   const domain = at === -1 ? "" : email.slice(at + 1);
-  return PERSONAL_EMAIL_DOMAINS.includes(domain);
+  return UNIVERSITY_EMAIL_DOMAINS.includes(domain);
 };
 
 /* The client's own X-Forwarded-For entry is whatever it chooses to send —
@@ -235,7 +239,7 @@ function validateLaunch(b: Record<string, unknown>): Result {
     status: "registered",
   };
   if (row.full_name.length < 2) return { ok: false, error: "full_name" };
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email) || isPersonalEmail(row.email)) {
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email) || !isUniversityEmail(row.email)) {
     return { ok: false, error: "email" };
   }
   if (row.phone.replace(/\D/g, "").length < 7) return { ok: false, error: "phone" };
@@ -279,7 +283,7 @@ function validateCouncil(b: Record<string, unknown>): Result {
   };
 
   if (row.full_name.length < 2) return { ok: false, error: "full_name" };
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email) || isPersonalEmail(row.email)) {
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email) || !isUniversityEmail(row.email)) {
     return { ok: false, error: "email" };
   }
   if (!row.university) return { ok: false, error: "university" };

@@ -52,13 +52,12 @@ window.TSC_CONFIG = {
   SUPABASE_URL: 'https://smvjvrwhbsvpnwdoastl.supabase.co',
   SUPABASE_ANON_KEY: '',
 
-  // Addresses permitted to register, by domain. Arjun is supplying the
-  // authoritative list. An EMPTY list means any signed-in Google account
-  // is accepted — still a real improvement, because the address is then
-  // proven rather than typed. Add entries here and push; no redeploy.
-  // The edge function enforces the same list server-side via the
-  // ALLOWED_EMAIL_DOMAINS secret, which is the one that actually counts.
-  ALLOWED_EMAIL_DOMAINS: [],
+  // Addresses permitted to register, by domain — used only if Google
+  // sign-in (REQUIRE_LOGIN) is actually active, which needs SUPABASE_ANON_KEY
+  // filled in below. The real, always-on gate is the plain email-domain
+  // check in assets/js/forms.js and the edge function's
+  // UNIVERSITY_EMAIL_DOMAINS list — keep all three in sync by hand.
+  ALLOWED_EMAIL_DOMAINS: ['rajalakshmi.edu.in', 'snu.edu.in', 'anurag.edu.in', 'chitkara.edu.in'],
 
   // ---- Council applications -------------------------------------------
   // The board wants council applications closed until after Orientation,
