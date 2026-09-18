@@ -1,8 +1,8 @@
 # Tech & Skills Council — website
 
 Public site and the two front doors (Launch Day registration, council applications) for the
-Tech & Skills Council, an independent, cross-university technical council spanning Rajalakshmi
-Engineering College, Shiv Nadar University, Anurag University and Chitkara University.
+Tech & Skills Council, an independent, cross-university technical council spanning Anurag
+University, Chitkara University, Rajalakshmi Engineering College and Shiv Nadar University.
 
 **Learn by Building.** — live at https://tech-skills-council.github.io/
 

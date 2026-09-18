@@ -71,7 +71,7 @@
     leadership_history: 'your leadership history',
     portfolio_url: 'your portfolio link',
     linkedin_url: 'your LinkedIn link',
-    on_asu_pathway: 'whether you are on an active pathway programme',
+    on_asu_pathway: 'whether you are a Dual Degree Student',
     consent: 'the consent box'
   };
 

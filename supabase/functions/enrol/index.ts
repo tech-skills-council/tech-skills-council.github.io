@@ -327,7 +327,7 @@ function emailHtml(form: string, row: Record<string, unknown>) {
       ["Portfolio", row.portfolio_url],
       ["LinkedIn", row.linkedin_url],
       ["Coming to Launch Day", row.attending_launch ? "Yes" : "No"],
-      ["On the pathway programme", row.on_asu_pathway],
+      ["Dual Degree Student", row.on_asu_pathway],
     ]
     : [
       ["Name", row.full_name],
@@ -341,7 +341,7 @@ function emailHtml(form: string, row: Record<string, unknown>) {
       ["Dietary needs", row.dietary],
       ["Heard about us via", row.hear_about],
       ["Wants to build", row.interests],
-      ["On the pathway programme", row.on_asu_pathway],
+      ["Dual Degree Student", row.on_asu_pathway],
     ];
 
   const table = rows.map(([k, v]) =>
