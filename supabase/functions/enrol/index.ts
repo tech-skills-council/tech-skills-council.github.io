@@ -111,7 +111,7 @@ const nullIfEmpty = (v: string) => (v.length ? v : null);
    the copy that actually counts — the client-side check in forms.js only
    saves a round trip and must be kept in sync with this list by hand. */
 const UNIVERSITY_EMAIL_DOMAINS = [
-  "rajalakshmi.edu.in", "snu.edu.in", "anurag.edu.in", "chitkara.edu.in",
+  "@rajalakshmi.edu.in", "@snu.edu.in", "_auic25@anurag.edu.in", "@chitkara.edu.in", "_auic26@anurag.edu.in",
 ];
 const isUniversityEmail = (email: string): boolean => {
   const at = email.lastIndexOf("@");
