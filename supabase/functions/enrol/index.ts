@@ -31,10 +31,9 @@
 //                                  Empty = any verified Google account.
 //
 // Separately, and always on regardless of REQUIRE_LOGIN: every submitted
-// email — typed or Google-verified — must end in one of
-// UNIVERSITY_EMAIL_DOMAINS below. That hardcoded list, not this secret, is
-// what actually restricts registration to the four partner universities
-// today.
+// email — typed or Google-verified — is checked against isUniversityEmail()
+// below. That hardcoded logic, not this secret, is what actually restricts
+// registration to the four partner universities today.
 // ============================================================
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
@@ -107,16 +106,27 @@ const str = (v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
 const oneOf = (v: string, list: string[]) => (list.includes(v) ? v : "");
 const nullIfEmpty = (v: string) => (v.length ? v : null);
 
-/* Only these four partner-university domains may register or apply. This is
-   the copy that actually counts — the client-side check in forms.js only
-   saves a round trip and must be kept in sync with this list by hand. */
-const UNIVERSITY_EMAIL_DOMAINS = [
-  "@rajalakshmi.edu.in", "@snu.edu.in", "_auic25@anurag.edu.in", "@chitkara.edu.in", "_auic26@anurag.edu.in",
-];
+/* rajalakshmi.edu.in, snu.edu.in and chitkara.edu.in accept any local part.
+   anurag.edu.in is restricted further, to only the Dual Degree cohort
+   aliases — the address must end in "_auic25" or "_auic26" *before* the @,
+   since a plain @anurag.edu.in address belongs to a student who isn't on
+   the pathway. This is the copy that actually counts — the client-side
+   check in forms.js only saves a round trip and must be kept in sync with
+   this by hand. */
+const OPEN_UNIVERSITY_DOMAINS = ["rajalakshmi.edu.in", "snu.edu.in", "chitkara.edu.in"];
+const ANURAG_DOMAIN = "anurag.edu.in";
+const ANURAG_DUAL_DEGREE_SUFFIXES = ["_auic25", "_auic26"];
+
 const isUniversityEmail = (email: string): boolean => {
   const at = email.lastIndexOf("@");
-  const domain = at === -1 ? "" : email.slice(at + 1);
-  return UNIVERSITY_EMAIL_DOMAINS.includes(domain);
+  if (at === -1) return false;
+  const local = email.slice(0, at);
+  const domain = email.slice(at + 1);
+  if (OPEN_UNIVERSITY_DOMAINS.includes(domain)) return true;
+  if (domain === ANURAG_DOMAIN) {
+    return ANURAG_DUAL_DEGREE_SUFFIXES.some((suffix) => local.endsWith(suffix));
+  }
+  return false;
 };
 
 /* The client's own X-Forwarded-For entry is whatever it chooses to send —

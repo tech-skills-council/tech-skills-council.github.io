@@ -178,12 +178,29 @@
 
   var MIN_LENGTH = { why_join: 80, relevant_experience: 60, what_you_would_build: 0 };
 
-  /* Only these four partner-university domains may register. Mirrors the
-     edge function exactly — that copy is the one that actually counts,
-     since this client-side check only saves a round trip. */
-  var ALLOWED_EMAIL_DOMAINS = [
-    'rajalakshmi.edu.in', 'snu.edu.in', 'anurag.edu.in', 'chitkara.edu.in'
-  ];
+  /* rajalakshmi.edu.in, snu.edu.in and chitkara.edu.in accept any local
+     part. anurag.edu.in is restricted further, to only the Dual Degree
+     cohort aliases — the address must end in "_auic25" or "_auic26"
+     *before* the @. Mirrors the edge function exactly — that copy is the
+     one that actually counts, since this client-side check only saves a
+     round trip. */
+  var OPEN_UNIVERSITY_DOMAINS = ['rajalakshmi.edu.in', 'snu.edu.in', 'chitkara.edu.in'];
+  var ANURAG_DOMAIN = 'anurag.edu.in';
+  var ANURAG_DUAL_DEGREE_SUFFIXES = ['_auic25', '_auic26'];
+
+  function isUniversityEmail(email) {
+    var at = String(email || '').lastIndexOf('@');
+    if (at === -1) return false;
+    var local = email.slice(0, at);
+    var domain = email.slice(at + 1).toLowerCase();
+    if (OPEN_UNIVERSITY_DOMAINS.indexOf(domain) !== -1) return true;
+    if (domain === ANURAG_DOMAIN) {
+      return ANURAG_DUAL_DEGREE_SUFFIXES.some(function (suffix) {
+        return local.slice(-suffix.length).toLowerCase() === suffix;
+      });
+    }
+    return false;
+  }
 
   function problems(data) {
     var bad = [];
@@ -203,9 +220,8 @@
       var v = data[n];
       if (v && ENUMS[n].indexOf(String(v)) === -1 && bad.indexOf(n) === -1) bad.push(n);
     });
-    var emailDomain = String(data.email || '').split('@')[1] || '';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || '') ||
-        ALLOWED_EMAIL_DOMAINS.indexOf(emailDomain.toLowerCase()) === -1) {
+        !isUniversityEmail(data.email || '')) {
       if (bad.indexOf('email') === -1) bad.push('email');
     }
     Object.keys(MIN_LENGTH).forEach(function (n) {
